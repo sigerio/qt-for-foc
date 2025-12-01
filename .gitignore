@@ -1,0 +1,37 @@
+# 编译产生的中间文件
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile.cmake
+
+# Qt生成的文件
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+*.qm
+
+# 可执行文件和库
+*.exe
+*.out
+*.app
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# 对象文件
+*.o
+*.obj
+
+# IDE配置
+.idea/
+.vscode/
+*.pro.user
+*.pro.user.*
+
+# 系统文件
+.DS_Store
+Thumbs.db
