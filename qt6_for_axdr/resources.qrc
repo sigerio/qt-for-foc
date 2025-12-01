@@ -1,6 +1,6 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
-    <qresource prefix="/fonts">
-        <file>fonts/AlibabaPuHuiTi-Regular.ttf</file>
+    <qresource prefix="/">
+        <!-- 资源文件（大文件如字体改为运行时加载） -->
     </qresource>
 </RCC>

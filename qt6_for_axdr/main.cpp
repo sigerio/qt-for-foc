@@ -1,37 +1,35 @@
+/**
+ * @file main.cpp
+ * @brief AxDr电机控制上位机主程序入口
+ */
+
 #include <QApplication>
-#include <QMainWindow>
-#include <QLabel>
-#include <QVBoxLayout>
 #include <QFont>
 #include <QFontDatabase>
+#include <QDir>
+#include <QDebug>
+
+#include "ui/main_window.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    // 从资源文件加载阿里普惠体
-    int fontId = QFontDatabase::addApplicationFont(":/fonts/fonts/AlibabaPuHuiTi-Regular.ttf");
-    if (fontId != -1) {
-        QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
-        if (!fontFamilies.isEmpty()) {
-            QFont font(fontFamilies.first(), 12);
+    /* 从文件系统加载阿里普惠体（避免资源文件过大导致编译内存不足） */
+    QString font_path = QApplication::applicationDirPath() + "/../fonts/AlibabaPuHuiTi-Regular.ttf";
+    int font_id = QFontDatabase::addApplicationFont(font_path);
+    if (font_id != -1) {
+        QStringList font_families = QFontDatabase::applicationFontFamilies(font_id);
+        if (!font_families.isEmpty()) {
+            QFont font(font_families.first(), 10);
             app.setFont(font);
         }
+    } else {
+        qDebug() << "字体加载失败，使用系统默认字体";
     }
 
-    QMainWindow window;
-    window.setWindowTitle("Qt6 For AXDR");
-    window.resize(800, 600);
-
-    // 创建中央部件
-    QWidget *centralWidget = new QWidget(&window);
-    QVBoxLayout *layout = new QVBoxLayout(centralWidget);
-
-    QLabel *label = new QLabel("Qt6 环境搭建成功！");
-    label->setAlignment(Qt::AlignCenter);
-    layout->addWidget(label);
-
-    window.setCentralWidget(centralWidget);
+    /* 创建并显示主窗口 */
+    main_window_t window;
     window.show();
 
     return app.exec();

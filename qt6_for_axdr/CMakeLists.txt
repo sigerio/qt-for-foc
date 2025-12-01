@@ -11,12 +11,46 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# 查找Qt6包
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+# 包含目录
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
-# 源文件
+# 查找Qt6包
+find_package(Qt6 REQUIRED COMPONENTS 
+    Core 
+    Gui 
+    Widgets 
+    SerialPort
+)
+
+# 源文件 - 主程序
 set(SOURCES
     main.cpp
+)
+
+# 串口通信模块源文件
+set(SERIAL_SOURCES
+    src/serial/modbus_client.cpp
+    src/serial/modbus_client.h
+)
+
+# 参数管理模块源文件
+set(PARAMS_SOURCES
+    src/params/motor_params.cpp
+    src/params/motor_params.h
+    src/params/param_manager.cpp
+    src/params/param_manager.h
+)
+
+# UI模块源文件
+set(UI_SOURCES
+    src/ui/main_window.cpp
+    src/ui/main_window.h
+    src/ui/serial_config_widget.cpp
+    src/ui/serial_config_widget.h
+    src/ui/pid_config_widget.cpp
+    src/ui/pid_config_widget.h
+    src/ui/motor_config_widget.cpp
+    src/ui/motor_config_widget.h
 )
 
 # 资源文件
@@ -25,11 +59,18 @@ set(RESOURCES
 )
 
 # 创建可执行文件
-add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
+add_executable(${PROJECT_NAME} 
+    ${SOURCES} 
+    ${SERIAL_SOURCES}
+    ${PARAMS_SOURCES}
+    ${UI_SOURCES}
+    ${RESOURCES}
+)
 
 # 链接Qt6库
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+    Qt6::SerialPort
 )
