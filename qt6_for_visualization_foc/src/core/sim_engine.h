@@ -43,6 +43,8 @@ public slots:
 signals:
     void state_updated(const motor_state_t& state);
     void step_completed(int step_index, const QString& step_name);
+    // FOC算法步骤变化信号（用于步骤高亮）
+    void foc_step_changed(e_foc_step step);
 
 private slots:
     void run_loop();

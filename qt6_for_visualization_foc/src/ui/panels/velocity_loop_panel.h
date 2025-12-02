@@ -27,7 +27,10 @@ signals:
     void loop_enabled_changed(bool enabled);
 
 private slots:
-    void on_slider_changed();
+    void on_slider_kp_changed(int val);
+    void on_slider_ki_changed(int val);
+    void on_spin_kp_changed(double val);
+    void on_spin_ki_changed(double val);
     void on_target_changed(double val);
     void on_enable_changed(int state);
 
@@ -35,8 +38,8 @@ private:
     waveform_view* m_vel_wave;
     QSlider* m_slider_kp;
     QSlider* m_slider_ki;
-    QLabel* m_label_kp;
-    QLabel* m_label_ki;
+    QDoubleSpinBox* m_spin_kp;
+    QDoubleSpinBox* m_spin_ki;
     QDoubleSpinBox* m_spin_target;
     QCheckBox* m_check_enable;
 };

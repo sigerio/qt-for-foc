@@ -18,13 +18,15 @@ motor_state_panel::motor_state_panel(QWidget* parent) : QWidget(parent) {
     // 转子动画和电流波形区域
     auto* view_layout = new QHBoxLayout();
     
-    // 转子动画
+    // 转子动画（固定大小）
     auto* rotor_group = new QGroupBox("转子位置", this);
     auto* rotor_layout = new QVBoxLayout(rotor_group);
     m_rotor = new rotor_animator(this);
     m_rotor->set_pole_pairs(4);
+    m_rotor->setFixedSize(220, 220);
     rotor_layout->addWidget(m_rotor);
-    view_layout->addWidget(rotor_group);
+    rotor_group->setFixedWidth(240);
+    view_layout->addWidget(rotor_group, 0);
     
     // 三相电流波形
     auto* wave_group = new QGroupBox("三相电流波形", this);

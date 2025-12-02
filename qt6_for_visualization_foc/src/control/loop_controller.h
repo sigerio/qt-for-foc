@@ -34,6 +34,11 @@ public:
     // 设置目标值
     void set_target(const control_target_t& target) override { m_target = target; }
     control_target_t get_target() const { return m_target; }
+    
+    // 获取内部计算的参考值（用于UI显示）
+    double get_id_ref() const { return m_target.id_ref; }
+    double get_iq_ref() const { return m_iq_ref_internal; }
+    double get_vel_ref() const { return m_vel_ref_internal; }
 
     // 计算控制输出
     control_target_t calc(const motor_state_t& state, double dt) override;
@@ -52,6 +57,10 @@ private:
     pid_controller m_pos_pid;
 
     control_target_t m_target;
+    
+    // 内部计算的参考值（用于UI显示）
+    double m_iq_ref_internal = 0.0;
+    double m_vel_ref_internal = 0.0;
 };
 
 #endif // CONTROL_LOOP_CONTROLLER_H

@@ -12,20 +12,36 @@ enum class e_motor_type {
     SRM         // 开关磁阻电机（预留）
 };
 
-// 电机参数结构
-struct motor_params_t {
-    double Rs      = 0.5;       // 定子电阻 (Ω)
-    double Ld      = 0.001;     // d轴电感 (H)
-    double Lq      = 0.001;     // q轴电感 (H)
-    double psi_f   = 0.1;       // 永磁体磁链 (Wb)
-    double J       = 0.0001;    // 转动惯量 (kg·m²)
-    double B       = 0.0001;    // 阻尼系数 (N·m·s/rad)
-    uint32_t p     = 4;         // 极对数
+// FOC算法执行步骤枚举（用于步骤高亮）
+enum class e_foc_step {
+    IDLE,           // 空闲
+    SAMPLING,       // 采样（读取电流、位置）
+    CLARK,          // Clark变换（abc→αβ）
+    PARK,           // Park变换（αβ→dq）
+    CURRENT_LOOP,   // 电流环PI计算
+    VELOCITY_LOOP,  // 速度环PI计算
+    POSITION_LOOP,  // 位置环PID计算
+    INV_PARK,       // 逆Park变换（dq→αβ）
+    SVPWM,          // SVPWM计算
+    OUTPUT,         // 输出PWM
+    MOTOR_MODEL     // 电机模型更新
 };
 
-// 电机状态结构
+// 电机参数结构（snake_case命名规范）
+struct motor_params_t {
+    double rs         = 0.5;       // 定子电阻 (Ω)
+    double ld         = 0.001;     // d轴电感 (H)
+    double lq         = 0.001;     // q轴电感 (H)
+    double psi_f      = 0.1;       // 永磁体磁链 (Wb)
+    double j          = 0.0001;    // 转动惯量 (kg·m²)
+    double b          = 0.0001;    // 阻尼系数 (N·m·s/rad)
+    uint32_t pole_pairs = 4;       // 极对数
+};
+
+// 电机状态结构（snake_case命名规范）
 struct motor_state_t {
     double theta_e   = 0.0;     // 电角度 (rad)
+    double theta_m   = 0.0;     // 机械角度 (rad)
     double omega_e   = 0.0;     // 电角速度 (rad/s)
     double omega_m   = 0.0;     // 机械角速度 (rad/s)
     double id        = 0.0;     // d轴电流 (A)
@@ -39,8 +55,8 @@ struct motor_state_t {
     double i_beta    = 0.0;     // β轴电流 (A)
     double u_alpha   = 0.0;     // α轴电压 (V)
     double u_beta    = 0.0;     // β轴电压 (V)
-    double Te        = 0.0;     // 电磁转矩 (N·m)
-    double TL        = 0.0;     // 负载转矩 (N·m)
+    double te        = 0.0;     // 电磁转矩 (N·m)
+    double tl        = 0.0;     // 负载转矩 (N·m)
 };
 
 // 控制目标结构
@@ -69,11 +85,11 @@ struct sim_config_t {
     bool single_step    = false;
 };
 
-// SVPWM输出结构
+// SVPWM输出结构（snake_case命名规范）
 struct svpwm_output_t {
-    double Ta       = 0.0;      // a相占空比
-    double Tb       = 0.0;      // b相占空比
-    double Tc       = 0.0;      // c相占空比
+    double ta       = 0.0;      // a相占空比
+    double tb       = 0.0;      // b相占空比
+    double tc       = 0.0;      // c相占空比
     int sector      = 1;        // 当前扇区(1-6)
     double mag      = 0.0;      // 矢量幅值
     double angle    = 0.0;      // 矢量角度 (rad)

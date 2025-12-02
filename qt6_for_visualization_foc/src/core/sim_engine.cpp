@@ -73,37 +73,54 @@ void sim_engine::run_loop() {
 
 void sim_engine::execute_one_step() {
     if (!m_motor) return;
+    
+    bool detailed = m_config.single_step;  // 单步模式发送详细步骤
 
+    // 设置默认负载转矩（中型电机负载）
+    m_motor->set_load_torque(0.2);
+    
+    // 步骤1: 采样
+    if (detailed) emit foc_step_changed(e_foc_step::SAMPLING);
     motor_state_t state = m_motor->get_state();
 
-    // 1. 获取控制输出
+    // 步骤2-4: 控制环计算（包含Clark、Park变换）
     double ud = 0.0, uq = 0.0;
     if (m_loop_ctrl) {
+        if (detailed) emit foc_step_changed(e_foc_step::POSITION_LOOP);
+        if (detailed) emit foc_step_changed(e_foc_step::VELOCITY_LOOP);
+        if (detailed) emit foc_step_changed(e_foc_step::CURRENT_LOOP);
         control_target_t target = m_loop_ctrl->calc(state, m_config.dt);
-        ud = target.id_ref;  // 简化：直接使用参考值作为电压
+        ud = target.id_ref;
         uq = target.iq_ref;
     }
 
-    // 2. 设置电机电压
+    // 步骤5: 逆Park变换
+    if (detailed) emit foc_step_changed(e_foc_step::INV_PARK);
     m_motor->set_voltage(ud, uq);
 
-    // 3. 执行电机模型仿真
-    m_motor->step(m_config.dt);
-
-    // 4. 获取新状态，计算SVPWM
+    // 步骤6: SVPWM计算
+    if (detailed) emit foc_step_changed(e_foc_step::SVPWM);
     state = m_motor->get_state();
     double u_alpha, u_beta;
     m_transform.inv_park(state.ud, state.uq, state.theta_e, u_alpha, u_beta);
     m_svpwm.calc(u_alpha, u_beta, m_udc,
-                 m_svpwm_out.Ta, m_svpwm_out.Tb, m_svpwm_out.Tc);
+                 m_svpwm_out.ta, m_svpwm_out.tb, m_svpwm_out.tc);
     m_svpwm_out.sector = m_svpwm.get_sector();
     m_svpwm.get_vector(m_svpwm_out.mag, m_svpwm_out.angle);
 
+    // 步骤7: 电机模型更新
+    if (detailed) emit foc_step_changed(e_foc_step::MOTOR_MODEL);
+    m_motor->step(m_config.dt);
+
+    // 步骤8: 输出
+    if (detailed) emit foc_step_changed(e_foc_step::OUTPUT);
+
     m_step_index++;
 
-    // 单步模式发送步骤完成信号
+    // 单步模式发送步骤完成信号（不清除高亮，保持最后步骤）
     if (m_config.single_step) {
         emit step_completed(m_step_index, QString("Step %1").arg(m_step_index));
-        emit state_updated(state);
+        emit state_updated(m_motor->get_state());
+        // 注意：不发送IDLE信号，保持最后一步的高亮状态
     }
 }

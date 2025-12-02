@@ -1,12 +1,16 @@
 #include "loop_controller.h"
 
 loop_controller::loop_controller() {
-    // 默认电流环PID参数（快速响应）
-    pid_params_t current_pid{10.0, 1000.0, 0.0, 24.0, -24.0, 10.0};
-    // 默认速度环PID参数
-    pid_params_t vel_pid{0.5, 10.0, 0.0, 10.0, -10.0, 5.0};
-    // 默认位置环PID参数
-    pid_params_t pos_pid{5.0, 0.1, 0.5, 100.0, -100.0, 50.0};
+    // 电流环PID（针对中型电机：Ld=1mH, Rs=0.3Ω，带宽约2kHz）
+    // Kp = Ld * ωc ≈ 12, Ki = Rs * ωc ≈ 1900
+    pid_params_t current_pid{12.0, 2000.0, 0.0, 24.0, -24.0, 20.0};
+    
+    // 速度环PI（带宽约200Hz）
+    // Kp = J * ωc / Kt ≈ 1.4, Ki ≈ 50
+    pid_params_t vel_pid{1.5, 50.0, 0.0, 5.0, -5.0, 3.0};
+    
+    // 位置环PID（带宽约30Hz）
+    pid_params_t pos_pid{8.0, 0.5, 0.3, 100.0, -100.0, 30.0};
 
     m_id_pid.set_params(current_pid);
     m_iq_pid.set_params(current_pid);
@@ -55,6 +59,10 @@ control_target_t loop_controller::calc(const motor_state_t& state, double dt) {
     if (m_velocity_enabled) {
         iq_ref = m_vel_pid.calc(vel_ref, state.omega_m, dt);
     }
+    
+    // 保存内部参考值用于UI显示
+    m_vel_ref_internal = vel_ref;
+    m_iq_ref_internal = iq_ref;
 
     // 电流环：id/iq误差 -> ud/uq电压
     double ud = 0.0, uq = 0.0;

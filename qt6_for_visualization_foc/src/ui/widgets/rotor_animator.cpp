@@ -36,9 +36,9 @@ void rotor_animator::paintEvent(QPaintEvent* event) {
     
     int w = width();
     int h = height();
-    int size = qMin(w, h) - 20;
+    int size = qMin(w, h) - 40;  // 增加边距以容纳标签
     int cx = w / 2;
-    int cy = h / 2;
+    int cy = h / 2 + 5;  // 稍微下移以为A相腾出空间
     int r_stator = size / 2;
     int r_rotor = size * 3 / 8;
     int r_shaft = size / 10;

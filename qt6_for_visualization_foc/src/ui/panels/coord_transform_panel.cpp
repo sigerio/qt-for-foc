@@ -16,24 +16,18 @@ coord_transform_panel::coord_transform_panel(QWidget* parent) : QWidget(parent) 
     // 矢量图区域
     auto* scope_layout = new QHBoxLayout();
     
-    // αβ坐标系
-    auto* ab_group = new QGroupBox("αβ坐标系", this);
+    // αβ坐标系矢量图（dq为直流量，不需要矢量图）
+    auto* ab_group = new QGroupBox("αβ坐标系（电流矢量）", this);
     auto* ab_layout = new QVBoxLayout(ab_group);
     m_ab_scope = new vector_scope(this);
-    m_ab_scope->set_range(2.0);
+    m_ab_scope->set_range(2.0);  // αβ电流范围（适配启动/单步大电流）
     m_ab_scope->set_color(QColor(0, 150, 255));
+    m_ab_scope->set_show_trail(false);
     ab_layout->addWidget(m_ab_scope);
     scope_layout->addWidget(ab_group);
     
-    // dq坐标系
-    auto* dq_group = new QGroupBox("dq坐标系", this);
-    auto* dq_layout = new QVBoxLayout(dq_group);
-    m_dq_scope = new vector_scope(this);
-    m_dq_scope->set_range(2.0);
-    m_dq_scope->set_color(QColor(255, 100, 50));
-    m_dq_scope->set_show_trail(false);
-    dq_layout->addWidget(m_dq_scope);
-    scope_layout->addWidget(dq_group);
+    // dq坐标系不显示矢量图（直流量），m_dq_scope置为nullptr
+    m_dq_scope = nullptr;
     
     layout->addLayout(scope_layout, 1);
     
@@ -85,7 +79,7 @@ void coord_transform_panel::update_alpha_beta(double i_alpha, double i_beta) {
 }
 
 void coord_transform_panel::update_dq(double i_d, double i_q) {
-    m_dq_scope->set_vector(i_d, i_q);
+    // dq矢量图已移除（直流量不需要矢量显示）
     m_label_id->setText(QString("%1 A").arg(i_d, 0, 'f', 2));
     m_label_iq->setText(QString("%1 A").arg(i_q, 0, 'f', 2));
 }

@@ -14,8 +14,8 @@ void pmsm_model::set_voltage(double ud, double uq) {
     m_state.uq = uq;
 }
 
-void pmsm_model::set_load_torque(double TL) {
-    m_state.TL = TL;
+void pmsm_model::set_load_torque(double tl) {
+    m_state.tl = tl;
 }
 
 // PMSM dq轴电压方程:
@@ -28,12 +28,12 @@ void pmsm_model::set_load_torque(double TL) {
 // dtheta_e/dt = omega_e
 void pmsm_model::step(double dt) {
     // 电流微分方程（欧拉法求解）
-    // did/dt = (ud - Rs*id + omega_e*Lq*iq) / Ld
-    // diq/dt = (uq - Rs*iq - omega_e*(Ld*id + psi_f)) / Lq
-    double did_dt = (m_state.ud - m_params.Rs * m_state.id
-                     + m_state.omega_e * m_params.Lq * m_state.iq) / m_params.Ld;
-    double diq_dt = (m_state.uq - m_params.Rs * m_state.iq
-                     - m_state.omega_e * (m_params.Ld * m_state.id + m_params.psi_f)) / m_params.Lq;
+    // did/dt = (ud - rs*id + omega_e*lq*iq) / ld
+    // diq/dt = (uq - rs*iq - omega_e*(ld*id + psi_f)) / lq
+    double did_dt = (m_state.ud - m_params.rs * m_state.id
+                     + m_state.omega_e * m_params.lq * m_state.iq) / m_params.ld;
+    double diq_dt = (m_state.uq - m_params.rs * m_state.iq
+                     - m_state.omega_e * (m_params.ld * m_state.id + m_params.psi_f)) / m_params.lq;
 
     // 更新电流
     m_state.id += did_dt * dt;
@@ -42,12 +42,13 @@ void pmsm_model::step(double dt) {
     // 计算电磁转矩
     calc_torque();
 
-    // 运动方程：domega_m/dt = (Te - TL - B*omega_m) / J
-    double domega_m_dt = (m_state.Te - m_state.TL - m_params.B * m_state.omega_m) / m_params.J;
+    // 运动方程：domega_m/dt = (te - tl - b*omega_m) / j
+    double domega_m_dt = (m_state.te - m_state.tl - m_params.b * m_state.omega_m) / m_params.j;
     m_state.omega_m += domega_m_dt * dt;
 
-    // 更新电角速度和电角度
-    m_state.omega_e = m_params.p * m_state.omega_m;
+    // 更新电角速度和电角度（theta_m为机械角度）
+    m_state.omega_e = m_params.pole_pairs * m_state.omega_m;
+    m_state.theta_m = m_state.theta_e / m_params.pole_pairs;
     m_state.theta_e += m_state.omega_e * dt;
 
     // 角度归一化到[0, 2π)
@@ -71,11 +72,11 @@ void pmsm_model::reset() {
     m_state = motor_state_t{};
 }
 
-// 电磁转矩: Te = 1.5*p*(psi_f*iq + (Ld-Lq)*id*iq)
-// 对于表贴式PMSM（Ld≈Lq），简化为: Te = 1.5*p*psi_f*iq
+// 电磁转矩: te = 1.5*pole_pairs*(psi_f*iq + (ld-lq)*id*iq)
+// 对于表贴式PMSM（ld≈lq），简化为: te = 1.5*pole_pairs*psi_f*iq
 void pmsm_model::calc_torque() {
-    double reluctance_torque = (m_params.Ld - m_params.Lq) * m_state.id * m_state.iq;
-    m_state.Te = 1.5 * m_params.p * (m_params.psi_f * m_state.iq + reluctance_torque);
+    double reluctance_torque = (m_params.ld - m_params.lq) * m_state.id * m_state.iq;
+    m_state.te = 1.5 * m_params.pole_pairs * (m_params.psi_f * m_state.iq + reluctance_torque);
 }
 
 // 逆Park变换: dq -> αβ

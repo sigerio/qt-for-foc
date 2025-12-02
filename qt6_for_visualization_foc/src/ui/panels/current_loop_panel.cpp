@@ -46,23 +46,37 @@ current_loop_panel::current_loop_panel(QWidget* parent) : QWidget(parent) {
     auto* param_group = new QGroupBox("PI参数", this);
     auto* param_layout = new QGridLayout(param_group);
     
+    // Kp参数
     param_layout->addWidget(new QLabel("Kp:", this), 0, 0);
     m_slider_kp = new QSlider(Qt::Horizontal, this);
     m_slider_kp->setRange(0, 1000);
     m_slider_kp->setValue(100);
-    connect(m_slider_kp, &QSlider::valueChanged, this, &current_loop_panel::on_slider_changed);
     param_layout->addWidget(m_slider_kp, 0, 1);
-    m_label_kp = new QLabel("1.00", this);
-    param_layout->addWidget(m_label_kp, 0, 2);
+    m_spin_kp = new QDoubleSpinBox(this);
+    m_spin_kp->setRange(0, 10);
+    m_spin_kp->setDecimals(2);
+    m_spin_kp->setSingleStep(0.1);
+    m_spin_kp->setValue(1.00);
+    param_layout->addWidget(m_spin_kp, 0, 2);
     
+    // Ki参数
     param_layout->addWidget(new QLabel("Ki:", this), 0, 3);
     m_slider_ki = new QSlider(Qt::Horizontal, this);
     m_slider_ki->setRange(0, 10000);
     m_slider_ki->setValue(1000);
-    connect(m_slider_ki, &QSlider::valueChanged, this, &current_loop_panel::on_slider_changed);
     param_layout->addWidget(m_slider_ki, 0, 4);
-    m_label_ki = new QLabel("100.0", this);
-    param_layout->addWidget(m_label_ki, 0, 5);
+    m_spin_ki = new QDoubleSpinBox(this);
+    m_spin_ki->setRange(0, 1000);
+    m_spin_ki->setDecimals(1);
+    m_spin_ki->setSingleStep(10);
+    m_spin_ki->setValue(100.0);
+    param_layout->addWidget(m_spin_ki, 0, 5);
+    
+    // 信号连接：滑块和SpinBox同步
+    connect(m_slider_kp, &QSlider::valueChanged, this, &current_loop_panel::on_slider_kp_changed);
+    connect(m_slider_ki, &QSlider::valueChanged, this, &current_loop_panel::on_slider_ki_changed);
+    connect(m_spin_kp, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &current_loop_panel::on_spin_kp_changed);
+    connect(m_spin_ki, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &current_loop_panel::on_spin_ki_changed);
     
     layout->addWidget(param_group);
 }
@@ -72,12 +86,34 @@ void current_loop_panel::update_currents(double id_ref, double id, double iq_ref
     m_iq_wave->add_points({iq_ref, iq});
 }
 
-void current_loop_panel::on_slider_changed() {
-    double kp = m_slider_kp->value() / 100.0;
-    double ki = m_slider_ki->value() / 10.0;
-    m_label_kp->setText(QString::number(kp, 'f', 2));
-    m_label_ki->setText(QString::number(ki, 'f', 1));
-    emit pid_changed(kp, ki);
+void current_loop_panel::on_slider_kp_changed(int val) {
+    double kp = val / 100.0;
+    m_spin_kp->blockSignals(true);
+    m_spin_kp->setValue(kp);
+    m_spin_kp->blockSignals(false);
+    emit pid_changed(kp, m_spin_ki->value());
+}
+
+void current_loop_panel::on_slider_ki_changed(int val) {
+    double ki = val / 10.0;
+    m_spin_ki->blockSignals(true);
+    m_spin_ki->setValue(ki);
+    m_spin_ki->blockSignals(false);
+    emit pid_changed(m_spin_kp->value(), ki);
+}
+
+void current_loop_panel::on_spin_kp_changed(double val) {
+    m_slider_kp->blockSignals(true);
+    m_slider_kp->setValue(static_cast<int>(val * 100));
+    m_slider_kp->blockSignals(false);
+    emit pid_changed(val, m_spin_ki->value());
+}
+
+void current_loop_panel::on_spin_ki_changed(double val) {
+    m_slider_ki->blockSignals(true);
+    m_slider_ki->setValue(static_cast<int>(val * 10));
+    m_slider_ki->blockSignals(false);
+    emit pid_changed(m_spin_kp->value(), val);
 }
 
 void current_loop_panel::on_enable_changed(int state) {

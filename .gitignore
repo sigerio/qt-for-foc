@@ -35,3 +35,5 @@ qrc_*.cpp
 # 系统文件
 .DS_Store
 Thumbs.db
+qt6_for_axdr/build_error.log
+qt6_for_axdr/runlog

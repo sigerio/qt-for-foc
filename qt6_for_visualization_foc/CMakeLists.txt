@@ -20,6 +20,8 @@ set(CORE_SOURCES
     src/core/i_motor_model.h
     src/core/pmsm_model.h
     src/core/pmsm_model.cpp
+    src/core/bldc_model.h
+    src/core/bldc_model.cpp
     src/core/i_transform.h
     src/core/transform.h
     src/core/transform.cpp
@@ -42,6 +44,8 @@ set(CONTROL_SOURCES
     src/control/i_loop_controller.h
     src/control/loop_controller.h
     src/control/loop_controller.cpp
+    src/control/six_step_controller.h
+    src/control/six_step_controller.cpp
 )
 
 set(UI_SOURCES
@@ -67,6 +71,8 @@ set(UI_SOURCES
     src/ui/widgets/waveform_view.cpp
     src/ui/widgets/rotor_animator.h
     src/ui/widgets/rotor_animator.cpp
+    src/ui/widgets/step_indicator.h
+    src/ui/widgets/step_indicator.cpp
 )
 
 # 资源文件

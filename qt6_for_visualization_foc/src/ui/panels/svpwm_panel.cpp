@@ -132,12 +132,15 @@ svpwm_panel::svpwm_panel(QWidget* parent) : QWidget(parent) {
     title->setStyleSheet("font-weight: bold; font-size: 14px; padding: 5px;");
     layout->addWidget(title);
     
+    // 横向布局：六边形 + 参数
+    auto* h_layout = new QHBoxLayout();
+    
     // 六边形矢量图
     auto* hex_group = new QGroupBox("空间矢量六边形", this);
     auto* hex_layout = new QVBoxLayout(hex_group);
     m_hexagon = new svpwm_hexagon(this);
     hex_layout->addWidget(m_hexagon);
-    layout->addWidget(hex_group, 1);
+    h_layout->addWidget(hex_group, 1);
     
     // 数据显示区域
     auto* data_group = new QGroupBox("SVPWM参数", this);
@@ -148,34 +151,35 @@ svpwm_panel::svpwm_panel(QWidget* parent) : QWidget(parent) {
     m_label_sector->setStyleSheet("font-weight: bold; color: blue;");
     data_layout->addWidget(m_label_sector, 0, 1);
     
-    data_layout->addWidget(new QLabel("Uα:", this), 0, 2);
+    data_layout->addWidget(new QLabel("Uα:", this), 1, 0);
     m_label_u_alpha = new QLabel("0.00 V", this);
-    data_layout->addWidget(m_label_u_alpha, 0, 3);
+    data_layout->addWidget(m_label_u_alpha, 1, 1);
     
-    data_layout->addWidget(new QLabel("Uβ:", this), 0, 4);
+    data_layout->addWidget(new QLabel("Uβ:", this), 2, 0);
     m_label_u_beta = new QLabel("0.00 V", this);
-    data_layout->addWidget(m_label_u_beta, 0, 5);
+    data_layout->addWidget(m_label_u_beta, 2, 1);
     
     // 占空比进度条
-    data_layout->addWidget(new QLabel("Ta:", this), 1, 0);
+    data_layout->addWidget(new QLabel("Ta:", this), 3, 0);
     m_bar_ta = new QProgressBar(this);
     m_bar_ta->setRange(0, 100);
     m_bar_ta->setStyleSheet("QProgressBar::chunk { background-color: red; }");
-    data_layout->addWidget(m_bar_ta, 1, 1, 1, 2);
+    data_layout->addWidget(m_bar_ta, 3, 1);
     
-    data_layout->addWidget(new QLabel("Tb:", this), 1, 3);
+    data_layout->addWidget(new QLabel("Tb:", this), 4, 0);
     m_bar_tb = new QProgressBar(this);
     m_bar_tb->setRange(0, 100);
     m_bar_tb->setStyleSheet("QProgressBar::chunk { background-color: green; }");
-    data_layout->addWidget(m_bar_tb, 1, 4, 1, 2);
+    data_layout->addWidget(m_bar_tb, 4, 1);
     
-    data_layout->addWidget(new QLabel("Tc:", this), 2, 0);
+    data_layout->addWidget(new QLabel("Tc:", this), 5, 0);
     m_bar_tc = new QProgressBar(this);
     m_bar_tc->setRange(0, 100);
     m_bar_tc->setStyleSheet("QProgressBar::chunk { background-color: blue; }");
-    data_layout->addWidget(m_bar_tc, 2, 1, 1, 2);
+    data_layout->addWidget(m_bar_tc, 5, 1);
     
-    layout->addWidget(data_group);
+    h_layout->addWidget(data_group);
+    layout->addLayout(h_layout, 1);
 }
 
 void svpwm_panel::update_voltage(double u_alpha, double u_beta) {

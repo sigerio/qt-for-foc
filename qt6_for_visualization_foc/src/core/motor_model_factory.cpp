@@ -1,20 +1,20 @@
 #include "motor_model_factory.h"
 #include "pmsm_model.h"
+#include "bldc_model.h"
 
 std::unique_ptr<i_motor_model> motor_model_factory::create(e_motor_type type) {
     switch (type) {
         case e_motor_type::PMSM:
             return std::make_unique<pmsm_model>();
-        // 后续扩展:
-        // case e_motor_type::BLDC:
-        //     return std::make_unique<bldc_model>();
+        case e_motor_type::BLDC:
+            return std::make_unique<bldc_model>();
         default:
             return nullptr;
     }
 }
 
 std::vector<e_motor_type> motor_model_factory::get_supported_types() {
-    return { e_motor_type::PMSM };
+    return { e_motor_type::PMSM, e_motor_type::BLDC };
 }
 
 QString motor_model_factory::get_type_name(e_motor_type type) {

@@ -27,7 +27,12 @@ signals:
     void loop_enabled_changed(bool enabled);
 
 private slots:
-    void on_slider_changed();
+    void on_slider_kp_changed(int val);
+    void on_slider_ki_changed(int val);
+    void on_slider_kd_changed(int val);
+    void on_spin_kp_changed(double val);
+    void on_spin_ki_changed(double val);
+    void on_spin_kd_changed(double val);
     void on_target_changed(double val);
     void on_enable_changed(int state);
 
@@ -36,9 +41,9 @@ private:
     QSlider* m_slider_kp;
     QSlider* m_slider_ki;
     QSlider* m_slider_kd;
-    QLabel* m_label_kp;
-    QLabel* m_label_ki;
-    QLabel* m_label_kd;
+    QDoubleSpinBox* m_spin_kp;
+    QDoubleSpinBox* m_spin_ki;
+    QDoubleSpinBox* m_spin_kd;
     QDoubleSpinBox* m_spin_target;
     QCheckBox* m_check_enable;
 };
