@@ -1,16 +1,99 @@
 #include "position_loop_panel.h"
+#include "../widgets/waveform_view.h"
 #include <QVBoxLayout>
-#include <QLabel>
+#include <QHBoxLayout>
+#include <QGroupBox>
+#include <QGridLayout>
 
 position_loop_panel::position_loop_panel(QWidget* parent) : QWidget(parent) {
     auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(5, 5, 5, 5);
     
+    // 标题和使能开关
+    auto* header = new QHBoxLayout();
     auto* title = new QLabel("位置环", this);
     title->setStyleSheet("font-weight: bold; font-size: 14px; padding: 5px;");
-    layout->addWidget(title);
+    header->addWidget(title);
+    m_check_enable = new QCheckBox("使能", this);
+    m_check_enable->setChecked(false);
+    connect(m_check_enable, &QCheckBox::stateChanged, this, &position_loop_panel::on_enable_changed);
+    header->addWidget(m_check_enable);
+    header->addStretch();
+    layout->addLayout(header);
     
-    auto* content = new QLabel("位置跟踪波形\n\nKp: -  Ki: -  Kd: -\n目标: - rad\n\n[待实现]", this);
-    layout->addWidget(content, 1);
+    // 位置波形
+    auto* wave_group = new QGroupBox("位置跟踪", this);
+    auto* wave_layout = new QVBoxLayout(wave_group);
+    m_pos_wave = new waveform_view(this);
+    m_pos_wave->set_channels(2, {QColor(200, 100, 200), QColor(150, 0, 150)});
+    m_pos_wave->set_channel_names({"θ_ref", "θ"});
+    wave_layout->addWidget(m_pos_wave);
+    layout->addWidget(wave_group, 1);
+    
+    // PID参数和目标位置
+    auto* param_group = new QGroupBox("PID参数", this);
+    auto* param_layout = new QGridLayout(param_group);
+    
+    param_layout->addWidget(new QLabel("Kp:", this), 0, 0);
+    m_slider_kp = new QSlider(Qt::Horizontal, this);
+    m_slider_kp->setRange(0, 200);
+    m_slider_kp->setValue(50);
+    connect(m_slider_kp, &QSlider::valueChanged, this, &position_loop_panel::on_slider_changed);
+    param_layout->addWidget(m_slider_kp, 0, 1);
+    m_label_kp = new QLabel("5.0", this);
+    param_layout->addWidget(m_label_kp, 0, 2);
+    
+    param_layout->addWidget(new QLabel("Ki:", this), 0, 3);
+    m_slider_ki = new QSlider(Qt::Horizontal, this);
+    m_slider_ki->setRange(0, 100);
+    m_slider_ki->setValue(10);
+    connect(m_slider_ki, &QSlider::valueChanged, this, &position_loop_panel::on_slider_changed);
+    param_layout->addWidget(m_slider_ki, 0, 4);
+    m_label_ki = new QLabel("1.0", this);
+    param_layout->addWidget(m_label_ki, 0, 5);
+    
+    param_layout->addWidget(new QLabel("Kd:", this), 1, 0);
+    m_slider_kd = new QSlider(Qt::Horizontal, this);
+    m_slider_kd->setRange(0, 100);
+    m_slider_kd->setValue(1);
+    connect(m_slider_kd, &QSlider::valueChanged, this, &position_loop_panel::on_slider_changed);
+    param_layout->addWidget(m_slider_kd, 1, 1);
+    m_label_kd = new QLabel("0.01", this);
+    param_layout->addWidget(m_label_kd, 1, 2);
+    
+    param_layout->addWidget(new QLabel("目标位置:", this), 1, 3);
+    m_spin_target = new QDoubleSpinBox(this);
+    m_spin_target->setRange(-100, 100);
+    m_spin_target->setValue(6.28);
+    m_spin_target->setDecimals(2);
+    m_spin_target->setSuffix(" rad");
+    connect(m_spin_target, QOverload<double>::of(&QDoubleSpinBox::valueChanged), 
+            this, &position_loop_panel::on_target_changed);
+    param_layout->addWidget(m_spin_target, 1, 4, 1, 2);
+    
+    layout->addWidget(param_group);
+}
+
+void position_loop_panel::update_position(double pos_ref, double pos) {
+    m_pos_wave->add_points({pos_ref, pos});
+}
+
+void position_loop_panel::on_slider_changed() {
+    double kp = m_slider_kp->value() / 10.0;
+    double ki = m_slider_ki->value() / 10.0;
+    double kd = m_slider_kd->value() / 100.0;
+    m_label_kp->setText(QString::number(kp, 'f', 1));
+    m_label_ki->setText(QString::number(ki, 'f', 1));
+    m_label_kd->setText(QString::number(kd, 'f', 2));
+    emit pid_changed(kp, ki, kd);
+}
+
+void position_loop_panel::on_target_changed(double val) {
+    emit target_changed(val);
+}
+
+void position_loop_panel::on_enable_changed(int state) {
+    emit loop_enabled_changed(state == Qt::Checked);
 }
 
 void position_loop_panel::update_waveform() {}
