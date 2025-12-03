@@ -27,6 +27,7 @@ velocity_loop_panel::velocity_loop_panel(QWidget* parent) : QWidget(parent) {
     m_vel_wave = new waveform_view(this);
     m_vel_wave->set_channels(2, {QColor(100, 200, 100), QColor(0, 150, 0)});
     m_vel_wave->set_channel_names({"ω_ref", "ω"});
+    m_vel_wave->setMinimumHeight(100);
     wave_layout->addWidget(m_vel_wave);
     layout->addWidget(wave_group, 1);
     

@@ -1,9 +1,16 @@
+/**
+ * @file svpwm.cpp
+ * @brief 空间矢量脉宽调制(SVPWM)算法
+ * 
+ * 七段式中心对齐SVPWM实现：
+ * 1. 根据αβ电压判断所在扇区(1-6)
+ * 2. 计算相邻两个有效矢量的作用时间T1, T2
+ * 3. 计算零矢量时间T0 = Ts - T1 - T2
+ * 4. 按七段式序列分配三相PWM占空比
+ */
 #include "svpwm.h"
 #include <cmath>
 #include <algorithm>
-
-// SVPWM算法实现
-// 基于七段式调制，采用中心对齐PWM
 void svpwm::calc(double u_alpha, double u_beta, double udc,
                  double& Ta, double& Tb, double& Tc) {
     // 保存矢量信息

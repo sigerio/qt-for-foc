@@ -1,0 +1,48 @@
+{
+    "_comment": "BLDC无刷直流电机FOC控制配置",
+    "motor": {
+        "rs": 0.5,
+        "ld": 0.0008,
+        "lq": 0.0008,
+        "psi_f": 0.12,
+        "j": 0.0008,
+        "b": 0.00008,
+        "pole_pairs": 3
+    },
+    "sim": {
+        "dt": 0.0001,
+        "speed_ratio": 1.0
+    },
+    "current_pid": {
+        "_comment": "BLDC电流环：带宽2kHz，Kp=L*wc=10, Ki=Rs*wc=6280",
+        "kp": 10.05,
+        "ki": 6280.0,
+        "kd": 0.0,
+        "out_max": 24.0,
+        "out_min": -24.0,
+        "integral_max": 15.0
+    },
+    "velocity_pid": {
+        "_comment": "BLDC速度环：带宽80Hz，Kt=1.5*p*psi_f=0.54",
+        "kp": 0.75,
+        "ki": 60.0,
+        "kd": 0.0,
+        "out_max": 4.0,
+        "out_min": -4.0,
+        "integral_max": 2.5
+    },
+    "position_pid": {
+        "kp": 8.0,
+        "ki": 0.3,
+        "kd": 0.4,
+        "out_max": 80.0,
+        "out_min": -80.0,
+        "integral_max": 25.0
+    },
+    "target": {
+        "id_ref": 0.0,
+        "iq_ref": 0.0,
+        "vel_ref": 80.0,
+        "pos_ref": 0.0
+    }
+}

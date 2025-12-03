@@ -55,32 +55,15 @@ void step_indicator::clear_highlight() {
 }
 
 void step_indicator::update_highlight() {
-    // 步骤索引映射（跳过IDLE）
-    int highlight_idx = -1;
-    switch (m_current) {
-        case e_foc_step::SAMPLING:      highlight_idx = 0; break;
-        case e_foc_step::CLARK:         highlight_idx = 1; break;
-        case e_foc_step::PARK:          highlight_idx = 2; break;
-        case e_foc_step::CURRENT_LOOP:  highlight_idx = 3; break;
-        case e_foc_step::VELOCITY_LOOP: highlight_idx = 4; break;
-        case e_foc_step::POSITION_LOOP: highlight_idx = 5; break;
-        case e_foc_step::INV_PARK:      highlight_idx = 6; break;
-        case e_foc_step::SVPWM:         highlight_idx = 7; break;
-        case e_foc_step::OUTPUT:        highlight_idx = 8; break;
-        case e_foc_step::MOTOR_MODEL:   highlight_idx = 9; break;
-        default: break;
-    }
+    // 步骤到索引映射表（IDLE=-1, SAMPLING=0, ..., MOTOR_MODEL=9）
+    static constexpr int STEP_MAP[] = {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int idx = static_cast<int>(m_current);
+    int highlight = (idx >= 0 && idx < 11) ? STEP_MAP[idx] : -1;
     
-    // 更新样式
-    for (size_t i = 0; i < m_labels.size(); ++i) {
-        if (static_cast<int>(i) == highlight_idx) {
-            m_labels[i]->setStyleSheet(
-                "QLabel { padding: 3px; border-radius: 2px; "
-                "background-color: #4CAF50; color: white; font-weight: bold; }");
-        } else {
-            m_labels[i]->setStyleSheet(
-                "QLabel { padding: 3px; border-radius: 2px; "
-                "background-color: #f0f0f0; color: #333; }");
-        }
-    }
+    static const char* ON_STYLE = "QLabel { padding: 3px; border-radius: 2px; "
+                                   "background-color: #4CAF50; color: white; font-weight: bold; }";
+    static const char* OFF_STYLE = "QLabel { padding: 3px; border-radius: 2px; "
+                                    "background-color: #f0f0f0; color: #333; }";
+    for (size_t i = 0; i < m_labels.size(); ++i)
+        m_labels[i]->setStyleSheet(static_cast<int>(i) == highlight ? ON_STYLE : OFF_STYLE);
 }

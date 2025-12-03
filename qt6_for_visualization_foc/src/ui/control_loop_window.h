@@ -42,6 +42,12 @@ signals:
     void motor_type_changed(int type);
     // 控制模式变化信号（0=FOC, 1=六步换向）
     void control_mode_changed(int mode);
+    // 仿真速度变化信号
+    void speed_ratio_changed(double ratio);
+    // 配置加载信号（传递JSON文件路径）
+    void config_load_requested(const QString& path);
+    // 恢复默认配置信号
+    void config_reset_requested();
 
 private slots:
     void on_run_clicked();
@@ -49,6 +55,9 @@ private slots:
     void on_step_clicked();
     void on_motor_type_changed(int index);
     void on_control_mode_changed(int index);
+    void on_speed_ratio_changed(int index);
+    void on_load_config_clicked();
+    void on_reset_config_clicked();
 
 private:
     void setup_ui();
@@ -65,8 +74,11 @@ private:
     QPushButton* m_btn_run = nullptr;
     QPushButton* m_btn_step = nullptr;
     QPushButton* m_btn_reset = nullptr;
+    QPushButton* m_btn_load_config = nullptr;
+    QPushButton* m_btn_reset_config = nullptr;
     QComboBox* m_combo_motor = nullptr;
     QComboBox* m_combo_mode = nullptr;
+    QComboBox* m_combo_speed = nullptr;
     QLabel* m_label_status = nullptr;
     bool m_running = false;
 };

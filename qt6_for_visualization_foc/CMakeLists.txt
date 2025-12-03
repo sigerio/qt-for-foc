@@ -36,6 +36,8 @@ set(CORE_SOURCES
     src/core/data_buffer.cpp
     src/core/motor_model_factory.h
     src/core/motor_model_factory.cpp
+    src/core/config_loader.h
+    src/core/config_loader.cpp
 )
 
 set(CONTROL_SOURCES
@@ -65,6 +67,8 @@ set(UI_SOURCES
     src/ui/panels/velocity_loop_panel.cpp
     src/ui/panels/position_loop_panel.h
     src/ui/panels/position_loop_panel.cpp
+    src/ui/panels/motor_params_panel.h
+    src/ui/panels/motor_params_panel.cpp
     src/ui/widgets/vector_scope.h
     src/ui/widgets/vector_scope.cpp
     src/ui/widgets/waveform_view.h
@@ -73,6 +77,8 @@ set(UI_SOURCES
     src/ui/widgets/rotor_animator.cpp
     src/ui/widgets/step_indicator.h
     src/ui/widgets/step_indicator.cpp
+    src/ui/widgets/hall_indicator.h
+    src/ui/widgets/hall_indicator.cpp
 )
 
 # 资源文件

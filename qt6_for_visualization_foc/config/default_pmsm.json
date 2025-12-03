@@ -1,0 +1,45 @@
+{
+    "motor": {
+        "rs": 0.3,
+        "ld": 0.001,
+        "lq": 0.001,
+        "psi_f": 0.15,
+        "j": 0.001,
+        "b": 0.0001,
+        "pole_pairs": 4
+    },
+    "sim": {
+        "dt": 0.0001,
+        "speed_ratio": 1.0
+    },
+    "current_pid": {
+        "kp": 12.57,
+        "ki": 3770.0,
+        "kd": 0.0,
+        "out_max": 24.0,
+        "out_min": -24.0,
+        "integral_max": 20.0
+    },
+    "velocity_pid": {
+        "kp": 0.7,
+        "ki": 88.0,
+        "kd": 0.0,
+        "out_max": 5.0,
+        "out_min": -5.0,
+        "integral_max": 3.0
+    },
+    "position_pid": {
+        "kp": 10.0,
+        "ki": 0.5,
+        "kd": 0.5,
+        "out_max": 100.0,
+        "out_min": -100.0,
+        "integral_max": 30.0
+    },
+    "target": {
+        "id_ref": 0.0,
+        "iq_ref": 0.0,
+        "vel_ref": 100.0,
+        "pos_ref": 0.0
+    }
+}

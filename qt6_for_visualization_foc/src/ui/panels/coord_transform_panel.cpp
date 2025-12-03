@@ -13,63 +13,68 @@ coord_transform_panel::coord_transform_panel(QWidget* parent) : QWidget(parent) 
     title->setStyleSheet("font-weight: bold; font-size: 14px; padding: 5px;");
     layout->addWidget(title);
     
-    // 矢量图区域
-    auto* scope_layout = new QHBoxLayout();
+    // 主内容区域：矢量图和数值横向排列
+    auto* content_layout = new QHBoxLayout();
     
-    // αβ坐标系矢量图（dq为直流量，不需要矢量图）
-    auto* ab_group = new QGroupBox("αβ坐标系（电流矢量）", this);
+    // 左侧：αβ坐标系矢量图
+    auto* ab_group = new QGroupBox("αβ坐标系", this);
     auto* ab_layout = new QVBoxLayout(ab_group);
     m_ab_scope = new vector_scope(this);
-    m_ab_scope->set_range(2.0);  // αβ电流范围（适配启动/单步大电流）
+    m_ab_scope->set_range(5.0);  // 增大范围以适配电流变化
     m_ab_scope->set_color(QColor(0, 150, 255));
     m_ab_scope->set_show_trail(false);
+    m_ab_scope->setMinimumSize(180, 180);
     ab_layout->addWidget(m_ab_scope);
-    scope_layout->addWidget(ab_group);
+    content_layout->addWidget(ab_group);
     
     // dq坐标系不显示矢量图（直流量），m_dq_scope置为nullptr
     m_dq_scope = nullptr;
     
-    layout->addLayout(scope_layout, 1);
-    
-    // 数值显示区域
+    // 右侧：电流数值显示
     auto* data_group = new QGroupBox("电流数值", this);
     auto* data_layout = new QGridLayout(data_group);
+    data_layout->setSpacing(4);
     
-    // abc三相
+    // abc三相（第一行）
     data_layout->addWidget(new QLabel("Ia:", this), 0, 0);
     m_label_ia = new QLabel("0.00 A", this);
-    m_label_ia->setStyleSheet("color: red;");
+    m_label_ia->setStyleSheet("color: red; font-weight: bold;");
+    m_label_ia->setMinimumWidth(70);
     data_layout->addWidget(m_label_ia, 0, 1);
     
-    data_layout->addWidget(new QLabel("Ib:", this), 0, 2);
+    data_layout->addWidget(new QLabel("Ib:", this), 1, 0);
     m_label_ib = new QLabel("0.00 A", this);
-    m_label_ib->setStyleSheet("color: green;");
-    data_layout->addWidget(m_label_ib, 0, 3);
+    m_label_ib->setStyleSheet("color: green; font-weight: bold;");
+    data_layout->addWidget(m_label_ib, 1, 1);
     
-    data_layout->addWidget(new QLabel("Ic:", this), 0, 4);
+    data_layout->addWidget(new QLabel("Ic:", this), 2, 0);
     m_label_ic = new QLabel("0.00 A", this);
-    m_label_ic->setStyleSheet("color: blue;");
-    data_layout->addWidget(m_label_ic, 0, 5);
+    m_label_ic->setStyleSheet("color: blue; font-weight: bold;");
+    data_layout->addWidget(m_label_ic, 2, 1);
     
-    // αβ
-    data_layout->addWidget(new QLabel("Iα:", this), 1, 0);
+    // αβ（第二列）
+    data_layout->addWidget(new QLabel("Iα:", this), 0, 2);
     m_label_i_alpha = new QLabel("0.00 A", this);
-    data_layout->addWidget(m_label_i_alpha, 1, 1);
+    m_label_i_alpha->setMinimumWidth(70);
+    data_layout->addWidget(m_label_i_alpha, 0, 3);
     
     data_layout->addWidget(new QLabel("Iβ:", this), 1, 2);
     m_label_i_beta = new QLabel("0.00 A", this);
     data_layout->addWidget(m_label_i_beta, 1, 3);
     
-    // dq
-    data_layout->addWidget(new QLabel("Id:", this), 1, 4);
+    // dq（第三列）
+    data_layout->addWidget(new QLabel("Id:", this), 0, 4);
     m_label_id = new QLabel("0.00 A", this);
-    data_layout->addWidget(m_label_id, 1, 5);
+    m_label_id->setMinimumWidth(70);
+    data_layout->addWidget(m_label_id, 0, 5);
     
-    data_layout->addWidget(new QLabel("Iq:", this), 2, 0);
+    data_layout->addWidget(new QLabel("Iq:", this), 1, 4);
     m_label_iq = new QLabel("0.00 A", this);
-    data_layout->addWidget(m_label_iq, 2, 1);
+    data_layout->addWidget(m_label_iq, 1, 5);
     
-    layout->addWidget(data_group);
+    content_layout->addWidget(data_group);
+    
+    layout->addLayout(content_layout, 1);
 }
 
 void coord_transform_panel::update_alpha_beta(double i_alpha, double i_beta) {

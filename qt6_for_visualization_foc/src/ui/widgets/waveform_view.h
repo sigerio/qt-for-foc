@@ -3,8 +3,11 @@
 
 #include <QWidget>
 #include <QColor>
+#include <QRect>
 #include <vector>
 #include <deque>
+
+class QPainter;
 
 // 多通道波形显示控件
 class waveform_view : public QWidget {
@@ -40,6 +43,13 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    // 绘制辅助方法
+    void calc_y_range(double& y_min, double& y_max) const;
+    void draw_grid(QPainter& p, const QRect& plot);
+    void draw_y_axis(QPainter& p, const QRect& plot, double y_min, double y_max);
+    void draw_waveforms(QPainter& p, const QRect& plot, double y_min, double y_max);
+    void draw_legend(QPainter& p, const QRect& plot);
+
     struct channel_data {
         std::deque<double> data;
         QColor color;

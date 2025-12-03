@@ -12,6 +12,21 @@ enum class e_motor_type {
     SRM         // 开关磁阻电机（预留）
 };
 
+// 控制模式枚举
+enum class e_control_mode {
+    FOC,        // 矢量控制
+    SIX_STEP    // 六步换向
+};
+
+// 霍尔传感器状态结构
+struct hall_state_t {
+    bool ha = false;      // 霍尔A信号
+    bool hb = false;      // 霍尔B信号
+    bool hc = false;      // 霍尔C信号
+    int sector = 1;       // 当前换向扇区(1-6)
+    int hall_code = 0;    // 霍尔编码（3位二进制）
+};
+
 // FOC算法执行步骤枚举（用于步骤高亮）
 enum class e_foc_step {
     IDLE,           // 空闲

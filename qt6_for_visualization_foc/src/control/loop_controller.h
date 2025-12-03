@@ -43,8 +43,11 @@ public:
     // 计算控制输出
     control_target_t calc(const motor_state_t& state, double dt) override;
 
-    // 复位所有控制器
+    // 复位所有控制器（仅内部状态）
     void reset() override;
+    
+    // 完全恢复默认参数（包括PID参数）
+    void reset_to_default();
 
 private:
     bool m_current_enabled = true;

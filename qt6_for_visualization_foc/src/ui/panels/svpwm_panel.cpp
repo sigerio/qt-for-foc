@@ -90,10 +90,21 @@ void svpwm_hexagon::paintEvent(QPaintEvent* event) {
         p.drawText(lx - 10, ly + 5, labels[i]);
     }
     
-    // 绘制电压矢量
-    double scale = r / 1.0;  // 假设最大电压为1.0
-    int vx = cx + static_cast<int>(m_u_alpha * scale);
-    int vy = cy - static_cast<int>(m_u_beta * scale);
+    // 绘制电压矢量（限制在六边形内）
+    double mag = std::sqrt(m_u_alpha * m_u_alpha + m_u_beta * m_u_beta);
+    double max_voltage = 24.0;  // 最大电压（对应六边形边界）
+    double scale = r / max_voltage;
+    
+    // 限制矢量长度不超出六边形
+    double draw_alpha = m_u_alpha;
+    double draw_beta = m_u_beta;
+    if (mag > max_voltage) {
+        draw_alpha = m_u_alpha * max_voltage / mag;
+        draw_beta = m_u_beta * max_voltage / mag;
+    }
+    
+    int vx = cx + static_cast<int>(draw_alpha * scale);
+    int vy = cy - static_cast<int>(draw_beta * scale);
     
     p.setPen(QPen(Qt::red, 2));
     p.drawLine(cx, cy, vx, vy);

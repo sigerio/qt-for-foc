@@ -29,6 +29,7 @@ current_loop_panel::current_loop_panel(QWidget* parent) : QWidget(parent) {
     m_id_wave = new waveform_view(this);
     m_id_wave->set_channels(2, {QColor(100, 100, 255), QColor(0, 0, 200)});
     m_id_wave->set_channel_names({"Id_ref", "Id"});
+    m_id_wave->setMinimumHeight(100);
     id_layout->addWidget(m_id_wave);
     wave_layout->addWidget(id_group);
     
@@ -37,6 +38,7 @@ current_loop_panel::current_loop_panel(QWidget* parent) : QWidget(parent) {
     m_iq_wave = new waveform_view(this);
     m_iq_wave->set_channels(2, {QColor(255, 100, 100), QColor(200, 0, 0)});
     m_iq_wave->set_channel_names({"Iq_ref", "Iq"});
+    m_iq_wave->setMinimumHeight(100);
     iq_layout->addWidget(m_iq_wave);
     wave_layout->addWidget(iq_group);
     

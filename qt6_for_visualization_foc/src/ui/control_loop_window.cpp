@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QWidget>
+#include <QFileDialog>
 
 control_loop_window::control_loop_window(QWidget* parent)
     : QMainWindow(parent)
@@ -20,16 +21,16 @@ control_loop_window::~control_loop_window() = default;
 void control_loop_window::setup_ui()
 {
     setWindowTitle("三环控制");
-    setMinimumSize(800, 600);
+    setMinimumSize(900, 600);
 
     // 主容器
     auto* central = new QWidget(this);
-    auto* main_layout = new QVBoxLayout(central);
+    auto* main_layout = new QHBoxLayout(central);
     main_layout->setContentsMargins(0, 0, 0, 0);
     main_layout->setSpacing(0);
     setCentralWidget(central);
     
-    // 使用QSplitter纵向排列三个面板
+    // 左侧：使用QSplitter纵向排列三个面板
     m_splitter = new QSplitter(Qt::Vertical, this);
 
     // 创建三个控制环面板
@@ -45,7 +46,7 @@ void control_loop_window::setup_ui()
     // 设置初始比例
     m_splitter->setSizes({400, 400, 400});
     
-    main_layout->addWidget(m_splitter);
+    main_layout->addWidget(m_splitter, 1);
 }
 
 void control_loop_window::setup_toolbar()
@@ -105,6 +106,34 @@ void control_loop_window::setup_toolbar()
     m_combo_mode->setMinimumWidth(100);
     toolbar->addWidget(m_combo_mode);
     
+    toolbar->addSeparator();
+    
+    // 仿真速度选择
+    toolbar->addWidget(new QLabel("速度:", this));
+    m_combo_speed = new QComboBox(this);
+    m_combo_speed->addItem("1x", QVariant(1.0));
+    m_combo_speed->addItem("2x", QVariant(2.0));
+    m_combo_speed->addItem("5x", QVariant(5.0));
+    m_combo_speed->addItem("10x", QVariant(10.0));
+    m_combo_speed->setMinimumWidth(60);
+    toolbar->addWidget(m_combo_speed);
+    
+    toolbar->addSeparator();
+    
+    // 加载配置按钮
+    m_btn_load_config = new QPushButton("📂 导入", this);
+    m_btn_load_config->setMinimumWidth(70);
+    m_btn_load_config->setStyleSheet("QPushButton { background-color: #607D8B; color: white; padding: 5px 10px; border-radius: 3px; }"
+                                     "QPushButton:hover { background-color: #455A64; }");
+    toolbar->addWidget(m_btn_load_config);
+    
+    // 恢复默认配置按钮
+    m_btn_reset_config = new QPushButton("🔄 默认", this);
+    m_btn_reset_config->setMinimumWidth(70);
+    m_btn_reset_config->setStyleSheet("QPushButton { background-color: #78909C; color: white; padding: 5px 10px; border-radius: 3px; }"
+                                      "QPushButton:hover { background-color: #546E7A; }");
+    toolbar->addWidget(m_btn_reset_config);
+    
     // 弹簧
     auto* spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -120,6 +149,10 @@ void control_loop_window::setup_connections()
             this, &control_loop_window::on_motor_type_changed);
     connect(m_combo_mode, QOverload<int>::of(&QComboBox::currentIndexChanged), 
             this, &control_loop_window::on_control_mode_changed);
+    connect(m_combo_speed, QOverload<int>::of(&QComboBox::currentIndexChanged), 
+            this, &control_loop_window::on_speed_ratio_changed);
+    connect(m_btn_load_config, &QPushButton::clicked, this, &control_loop_window::on_load_config_clicked);
+    connect(m_btn_reset_config, &QPushButton::clicked, this, &control_loop_window::on_reset_config_clicked);
 }
 
 void control_loop_window::on_run_clicked()
@@ -174,6 +207,29 @@ void control_loop_window::on_reset_clicked()
     m_label_status->setText("状态: 已复位");
     m_label_status->setStyleSheet("QLabel { color: #2196F3; padding: 5px; }");
     emit reset_requested();
+}
+
+void control_loop_window::on_speed_ratio_changed(int index)
+{
+    double ratio = m_combo_speed->currentData().toDouble();
+    emit speed_ratio_changed(ratio);
+    m_label_status->setText(QString("速度: %1x").arg(ratio));
+}
+
+void control_loop_window::on_load_config_clicked()
+{
+    QString path = QFileDialog::getOpenFileName(this, "导入配置文件", 
+                                                QString(), "JSON文件 (*.json)");
+    if (!path.isEmpty()) {
+        emit config_load_requested(path);
+        m_label_status->setText("配置已加载");
+    }
+}
+
+void control_loop_window::on_reset_config_clicked()
+{
+    emit config_reset_requested();
+    m_label_status->setText("已恢复默认配置");
 }
 
 void control_loop_window::update_waveform()

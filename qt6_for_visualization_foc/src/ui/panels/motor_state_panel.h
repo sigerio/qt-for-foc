@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QDoubleSpinBox>
+#include <QSlider>
 
 class rotor_animator;
 class waveform_view;
@@ -24,6 +26,14 @@ public slots:
     void update_motor_state(double omega, double torque, double theta);
     
     void update_display();
+    
+signals:
+    // 负载转矩变化信号
+    void load_torque_changed(double tl);
+
+private slots:
+    void on_load_slider_changed(int val);
+    void on_load_spin_changed(double val);
 
 private:
     rotor_animator* m_rotor;
@@ -32,6 +42,9 @@ private:
     QLabel* m_label_omega;
     QLabel* m_label_torque;
     QLabel* m_label_theta;
+    
+    QDoubleSpinBox* m_spin_load;
+    QSlider* m_slider_load;
 };
 
 #endif // UI_MOTOR_STATE_PANEL_H

@@ -11,9 +11,13 @@
 #include "ui/panels/velocity_loop_panel.h"
 #include "ui/panels/position_loop_panel.h"
 #include "ui/widgets/step_indicator.h"
+#include "ui/widgets/hall_indicator.h"
+#include "ui/panels/motor_params_panel.h"
 #include "core/sim_engine.h"
 #include "core/motor_model_factory.h"
+#include "core/config_loader.h"
 #include "control/loop_controller.h"
+#include "control/six_step_controller.h"
 
 int main(int argc, char* argv[])
 {
@@ -55,12 +59,16 @@ int main(int argc, char* argv[])
     }
     engine.set_motor_model(std::move(motor));
     
-    // 创建控制器并设置默认目标
+    // 创建FOC控制器并设置默认目标
     loop_controller ctrl;
     control_target_t target;
     target.vel_ref = 100.0;  // 默认速度目标
     ctrl.set_target(target);
     engine.set_loop_controller(&ctrl);
+    
+    // 创建六步换向控制器
+    six_step_controller six_step_ctrl;
+    engine.set_six_step_controller(&six_step_ctrl);
     
     // 配置仿真
     sim_config_t cfg;
@@ -75,9 +83,9 @@ int main(int argc, char* argv[])
         foc_win.coord_panel()->update_dq(state.id, state.iq);
         foc_win.coord_panel()->update_abc(state.ia, state.ib, state.ic);
         
-        // 更新SVPWM面板
+        // 更新SVPWM面板（使用αβ坐标系电压以显示旋转矢量）
         auto svpwm_out = engine.get_svpwm_output();
-        foc_win.svpwm_panel_ptr()->update_voltage(state.ud, state.uq);
+        foc_win.svpwm_panel_ptr()->update_voltage(state.u_alpha, state.u_beta);
         foc_win.svpwm_panel_ptr()->update_sector(svpwm_out.sector);
         foc_win.svpwm_panel_ptr()->update_duty(svpwm_out.ta, svpwm_out.tb, svpwm_out.tc);
         
@@ -124,6 +132,108 @@ int main(int argc, char* argv[])
             engine.set_motor_model(std::move(new_motor));
             engine.reset();
         }
+    });
+    
+    // 控制模式切换（FOC/六步换向）
+    QObject::connect(&ctrl_win, &control_loop_window::control_mode_changed, [&](int mode) {
+        engine.pause();
+        e_control_mode ctrl_mode = (mode == 0) ? e_control_mode::FOC : e_control_mode::SIX_STEP;
+        engine.set_control_mode(ctrl_mode);
+        // 切换右侧指示器面板
+        foc_win.set_control_mode(ctrl_mode);
+        engine.reset();
+    });
+    
+    // 连接霍尔状态变化信号
+    QObject::connect(&engine, &sim_engine::hall_state_changed, 
+                     foc_win.hall_ind(), &hall_indicator::set_hall_state);
+    
+    // 仿真速度调节
+    QObject::connect(&ctrl_win, &control_loop_window::speed_ratio_changed, [&](double ratio) {
+        sim_config_t cfg_new = engine.get_config();
+        cfg_new.speed_ratio = ratio;
+        engine.set_config(cfg_new);
+    });
+    
+    // 速度目标设定
+    QObject::connect(ctrl_win.velocity_panel(), &velocity_loop_panel::target_changed, [&](double vel) {
+        control_target_t t = ctrl.get_target();
+        t.vel_ref = vel;
+        ctrl.set_target(t);
+    });
+    
+    // 位置目标设定
+    QObject::connect(ctrl_win.position_panel(), &position_loop_panel::target_changed, [&](double pos) {
+        control_target_t t = ctrl.get_target();
+        t.pos_ref = pos;
+        ctrl.set_target(t);
+    });
+    
+    // 配置文件加载
+    QObject::connect(&ctrl_win, &control_loop_window::config_load_requested, [&](const QString& path) {
+        config_data_t cfg = config_loader::load(path);
+        if (cfg.valid) {
+            engine.pause();
+            // 更新电机参数
+            params = cfg.motor;
+            if (auto* m = engine.get_motor_model()) {
+                m->set_params(params);
+            }
+            foc_win.params_panel()->set_params(params);
+            // 更新仿真配置
+            engine.set_config(cfg.sim);
+            // 更新PID参数
+            ctrl.set_current_pid(cfg.current_pid, cfg.current_pid);
+            ctrl.set_velocity_pid(cfg.velocity_pid);
+            ctrl.set_position_pid(cfg.position_pid);
+            // 更新六步换向参数
+            if (cfg.has_six_step) {
+                six_step_ctrl.set_speed_pid(cfg.six_step.kp, cfg.six_step.ki);
+            }
+            // 更新控制目标
+            ctrl.set_target(cfg.target);
+            engine.reset();
+            qDebug() << "配置已加载:" << path;
+        }
+    });
+    
+    // 负载扰动注入
+    QObject::connect(foc_win.motor_panel(), &motor_state_panel::load_torque_changed, [&](double tl) {
+        engine.set_load_torque(tl);
+    });
+    
+    // 电机参数变化
+    QObject::connect(foc_win.params_panel(), &motor_params_panel::params_changed, [&](const motor_params_t& p) {
+        params = p;
+        if (auto* m = engine.get_motor_model()) {
+            m->set_params(params);
+        }
+    });
+    
+    // 恢复默认配置
+    QObject::connect(&ctrl_win, &control_loop_window::config_reset_requested, [&]() {
+        engine.pause();
+        // 恢复默认电机参数
+        params.rs = 0.3;
+        params.ld = 0.001;
+        params.lq = 0.001;
+        params.psi_f = 0.15;
+        params.j = 0.001;
+        params.b = 0.0001;
+        params.pole_pairs = 4;
+        if (auto* m = engine.get_motor_model()) {
+            m->set_params(params);
+        }
+        foc_win.params_panel()->set_params(params);
+        // 恢复默认仿真配置
+        sim_config_t default_cfg;
+        default_cfg.dt = 100e-6;
+        default_cfg.speed_ratio = 1.0;
+        engine.set_config(default_cfg);
+        // 恢复默认PID参数和控制目标
+        ctrl.reset_to_default();
+        engine.reset();
+        qDebug() << "已恢复默认配置";
     });
 
     // 设置窗口位置

@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+class QPainter;
+
 // PMSM转子动画控件
 class rotor_animator : public QWidget {
     Q_OBJECT
@@ -25,6 +27,10 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    void draw_stator(QPainter& p, int cx, int cy, int r_stator, int r_rotor);
+    void draw_rotor(QPainter& p, int cx, int cy, int r_rotor, int r_shaft);
+    void draw_arrow_and_labels(QPainter& p, int cx, int cy, int r_rotor, int h);
+
     double m_angle = 0.0;
     int m_pole_pairs = 4;
     bool m_show_stator = true;

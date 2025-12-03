@@ -69,102 +69,107 @@ void waveform_view::clear() {
     update();
 }
 
-void waveform_view::paintEvent(QPaintEvent* event) {
-    Q_UNUSED(event);
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);
-    
-    int w = width();
-    int h = height();
-    int margin_left = 50;
-    int margin_right = 10;
-    int margin_top = 10;
-    int margin_bottom = 20;
-    int plot_w = w - margin_left - margin_right;
-    int plot_h = h - margin_top - margin_bottom;
-    
-    // 绘制背景
-    p.fillRect(rect(), QColor(250, 250, 250));
-    p.fillRect(margin_left, margin_top, plot_w, plot_h, Qt::white);
-    
-    // 计算Y轴范围
-    double y_min = m_y_min;
-    double y_max = m_y_max;
-    if (m_auto_scale) {
-        y_min = std::numeric_limits<double>::max();
-        y_max = std::numeric_limits<double>::lowest();
-        for (const auto& ch : m_channels) {
-            for (double v : ch.data) {
-                y_min = std::min(y_min, v);
-                y_max = std::max(y_max, v);
-            }
-        }
-        if (y_min == y_max) {
-            y_min -= 1.0;
-            y_max += 1.0;
-        }
-        double margin = (y_max - y_min) * 0.1;
-        y_min -= margin;
-        y_max += margin;
+// 计算Y轴显示范围
+void waveform_view::calc_y_range(double& y_min, double& y_max) const {
+    if (!m_auto_scale) {
+        y_min = m_y_min;
+        y_max = m_y_max;
+        return;
     }
-    
-    // 绘制网格
+    y_min = std::numeric_limits<double>::max();
+    y_max = std::numeric_limits<double>::lowest();
+    for (const auto& ch : m_channels) {
+        for (double v : ch.data) {
+            y_min = std::min(y_min, v);
+            y_max = std::max(y_max, v);
+        }
+    }
+    if (y_min == y_max) { y_min -= 1.0; y_max += 1.0; }
+    double margin = (y_max - y_min) * 0.1;
+    y_min -= margin;
+    y_max += margin;
+}
+
+// 绘制网格和边框
+void waveform_view::draw_grid(QPainter& p, const QRect& plot) {
     if (m_show_grid) {
         p.setPen(QPen(QColor(230, 230, 230), 1, Qt::DotLine));
         for (int i = 1; i < 5; ++i) {
-            int y = margin_top + plot_h * i / 5;
-            p.drawLine(margin_left, y, margin_left + plot_w, y);
+            int y = plot.top() + plot.height() * i / 5;
+            p.drawLine(plot.left(), y, plot.right(), y);
         }
         for (int i = 1; i < 10; ++i) {
-            int x = margin_left + plot_w * i / 10;
-            p.drawLine(x, margin_top, x, margin_top + plot_h);
+            int x = plot.left() + plot.width() * i / 10;
+            p.drawLine(x, plot.top(), x, plot.bottom());
         }
     }
-    
-    // 绘制边框
     p.setPen(QPen(QColor(180, 180, 180), 1));
-    p.drawRect(margin_left, margin_top, plot_w, plot_h);
-    
-    // 绘制Y轴刻度
+    p.drawRect(plot);
+}
+
+// 绘制Y轴刻度
+void waveform_view::draw_y_axis(QPainter& p, const QRect& plot, double y_min, double y_max) {
     p.setPen(Qt::black);
     QFont font = p.font();
     font.setPointSize(8);
     p.setFont(font);
     for (int i = 0; i <= 5; ++i) {
         double val = y_max - (y_max - y_min) * i / 5;
-        int y = margin_top + plot_h * i / 5;
-        p.drawText(0, y - 6, margin_left - 5, 12, Qt::AlignRight | Qt::AlignVCenter,
+        int y = plot.top() + plot.height() * i / 5;
+        p.drawText(0, y - 6, plot.left() - 5, 12, Qt::AlignRight | Qt::AlignVCenter,
                    QString::number(val, 'f', 2));
     }
-    
-    // 坐标转换
+}
+
+// 绘制波形曲线
+void waveform_view::draw_waveforms(QPainter& p, const QRect& plot, double y_min, double y_max) {
     auto to_screen = [&](size_t idx, double val, size_t total) -> QPointF {
-        double x = margin_left + (double(idx) / std::max(size_t(1), total - 1)) * plot_w;
-        double y = margin_top + (1.0 - (val - y_min) / (y_max - y_min)) * plot_h;
+        double x = plot.left() + (double(idx) / std::max(size_t(1), total - 1)) * plot.width();
+        double y = plot.top() + (1.0 - (val - y_min) / (y_max - y_min)) * plot.height();
         return QPointF(x, y);
     };
-    
-    // 绘制各通道波形
     for (const auto& ch : m_channels) {
         if (ch.data.size() < 2) continue;
         p.setPen(QPen(ch.color, 1.5));
         QPainterPath path;
-        QPointF first = to_screen(0, ch.data[0], ch.data.size());
-        path.moveTo(first);
-        for (size_t i = 1; i < ch.data.size(); ++i) {
+        path.moveTo(to_screen(0, ch.data[0], ch.data.size()));
+        for (size_t i = 1; i < ch.data.size(); ++i)
             path.lineTo(to_screen(i, ch.data[i], ch.data.size()));
-        }
         p.drawPath(path);
     }
-    
-    // 绘制图例
-    int legend_x = margin_left + 5;
-    int legend_y = margin_top + 5;
+}
+
+// 绘制图例
+void waveform_view::draw_legend(QPainter& p, const QRect& plot) {
+    int x = plot.left() + 5, y = plot.top() + 5;
     for (size_t i = 0; i < m_channels.size(); ++i) {
         p.setPen(m_channels[i].color);
         p.setBrush(m_channels[i].color);
-        p.drawRect(legend_x, legend_y + static_cast<int>(i) * 15, 10, 10);
+        p.drawRect(x, y + static_cast<int>(i) * 15, 10, 10);
         p.setPen(Qt::black);
-        p.drawText(legend_x + 15, legend_y + static_cast<int>(i) * 15 + 10, m_channels[i].name);
+        p.drawText(x + 15, y + static_cast<int>(i) * 15 + 10, m_channels[i].name);
     }
+}
+
+void waveform_view::paintEvent(QPaintEvent* event) {
+    Q_UNUSED(event);
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    
+    // 计算绘图区域
+    QRect plot(50, 10, width() - 60, height() - 30);
+    
+    // 绘制背景
+    p.fillRect(rect(), QColor(250, 250, 250));
+    p.fillRect(plot, Qt::white);
+    
+    // 计算Y轴范围
+    double y_min, y_max;
+    calc_y_range(y_min, y_max);
+    
+    // 分步绘制
+    draw_grid(p, plot);
+    draw_y_axis(p, plot, y_min, y_max);
+    draw_waveforms(p, plot, y_min, y_max);
+    draw_legend(p, plot);
 }

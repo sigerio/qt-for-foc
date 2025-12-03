@@ -77,10 +77,17 @@ void vector_scope::paintEvent(QPaintEvent* event) {
     p.drawText(cx + r + 3, cy + 4, "α");
     p.drawText(cx - 4, cy - r - 5, "β");
     
-    // 坐标转换函数
+    // 坐标转换函数（限制在圆内）
     auto to_screen = [&](double alpha, double beta) -> QPointF {
-        double x = cx + (alpha / m_range) * r;
-        double y = cy - (beta / m_range) * r;  // Y轴向上为正
+        // 计算矢量幅值
+        double mag = std::sqrt(alpha * alpha + beta * beta);
+        // 如果超出范围，缩放到边界
+        double scale_factor = 1.0;
+        if (mag > m_range) {
+            scale_factor = m_range / mag;
+        }
+        double x = cx + (alpha * scale_factor / m_range) * r;
+        double y = cy - (beta * scale_factor / m_range) * r;  // Y轴向上为正
         return QPointF(x, y);
     };
     

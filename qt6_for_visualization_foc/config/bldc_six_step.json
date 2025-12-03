@@ -1,0 +1,28 @@
+{
+    "_comment": "BLDC无刷直流电机六步换向控制配置",
+    "motor": {
+        "rs": 0.5,
+        "ld": 0.0008,
+        "lq": 0.0008,
+        "psi_f": 0.12,
+        "j": 0.0008,
+        "b": 0.00008,
+        "pole_pairs": 3
+    },
+    "sim": {
+        "dt": 0.0001,
+        "speed_ratio": 1.0
+    },
+    "six_step": {
+        "_comment": "六步换向速度环PI参数",
+        "kp": 0.008,
+        "ki": 0.15,
+        "integral_max": 0.8
+    },
+    "target": {
+        "id_ref": 0.0,
+        "iq_ref": 0.0,
+        "vel_ref": 80.0,
+        "pos_ref": 0.0
+    }
+}

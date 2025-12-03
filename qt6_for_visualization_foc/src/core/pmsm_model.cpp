@@ -1,3 +1,12 @@
+/**
+ * @file pmsm_model.cpp
+ * @brief 永磁同步电机(PMSM)数学模型
+ * 
+ * 基于dq旋转坐标系建立PMSM电压方程和运动方程：
+ * - 电压方程采用磁链解耦模型
+ * - 使用欧拉法进行数值积分
+ * - 支持凸极(Ld≠Lq)和表贴式(Ld≈Lq)电机
+ */
 #include "pmsm_model.h"
 #include <cmath>
 

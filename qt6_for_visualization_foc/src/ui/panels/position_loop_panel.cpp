@@ -27,6 +27,7 @@ position_loop_panel::position_loop_panel(QWidget* parent) : QWidget(parent) {
     m_pos_wave = new waveform_view(this);
     m_pos_wave->set_channels(2, {QColor(200, 100, 200), QColor(150, 0, 150)});
     m_pos_wave->set_channel_names({"θ_ref", "θ"});
+    m_pos_wave->setMinimumHeight(100);
     wave_layout->addWidget(m_pos_wave);
     layout->addWidget(wave_group, 1);
     
