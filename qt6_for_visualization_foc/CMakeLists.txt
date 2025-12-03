@@ -55,6 +55,8 @@ set(UI_SOURCES
     src/ui/foc_visualization_window.cpp
     src/ui/control_loop_window.h
     src/ui/control_loop_window.cpp
+    src/ui/algorithm_explanation_window.h
+    src/ui/algorithm_explanation_window.cpp
     src/ui/panels/coord_transform_panel.h
     src/ui/panels/coord_transform_panel.cpp
     src/ui/panels/svpwm_panel.h
@@ -69,6 +71,14 @@ set(UI_SOURCES
     src/ui/panels/position_loop_panel.cpp
     src/ui/panels/motor_params_panel.h
     src/ui/panels/motor_params_panel.cpp
+    src/ui/panels/motor_model_explanation_panel.h
+    src/ui/panels/motor_model_explanation_panel.cpp
+    src/ui/panels/transform_explanation_panel.h
+    src/ui/panels/transform_explanation_panel.cpp
+    src/ui/panels/svpwm_explanation_panel.h
+    src/ui/panels/svpwm_explanation_panel.cpp
+    src/ui/panels/control_loop_explanation_panel.h
+    src/ui/panels/control_loop_explanation_panel.cpp
     src/ui/widgets/vector_scope.h
     src/ui/widgets/vector_scope.cpp
     src/ui/widgets/waveform_view.h
@@ -79,6 +89,22 @@ set(UI_SOURCES
     src/ui/widgets/step_indicator.cpp
     src/ui/widgets/hall_indicator.h
     src/ui/widgets/hall_indicator.cpp
+    src/ui/widgets/hexagon_widget.h
+    src/ui/widgets/hexagon_widget.cpp
+    src/ui/widgets/coordinate_widget.h
+    src/ui/widgets/coordinate_widget.cpp
+    src/ui/widgets/circuit_widget.h
+    src/ui/widgets/circuit_widget.cpp
+    src/ui/widgets/cascade_widget.h
+    src/ui/widgets/cascade_widget.cpp
+    src/ui/widgets/block_item.h
+    src/ui/widgets/block_item.cpp
+    src/ui/widgets/sumpoint_item.h
+    src/ui/widgets/sumpoint_item.cpp
+    src/ui/widgets/label_item.h
+    src/ui/widgets/label_item.cpp
+    src/ui/widgets/arrow_item.h
+    src/ui/widgets/arrow_item.cpp
 )
 
 # 资源文件

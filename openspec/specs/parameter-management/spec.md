@@ -1,6 +1,9 @@
 # 参数管理模块规格
 
-## ADDED Requirements
+## Purpose
+提供电机控制系统的参数管理功能，包括PID参数、电机物理参数、限制参数的读写，以及控制模式切换和参数本地存储功能。
+
+## Requirements
 
 ### Requirement: PID参数管理
 系统必须(SHALL)支持读写电流环、速度环、位置环的PID参数。

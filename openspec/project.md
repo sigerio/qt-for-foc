@@ -291,6 +291,21 @@ qt6_for_axdr/
 - [x] 核心算法文件添加注释
 - [x] 波形欠采样修复（每帧8次采样）
 
+#### M12: 算法说明窗口 (第三窗口) [进行中]
+- [x] 窗口框架（algorithm_explanation_window）
+- [x] 电机模型说明面板（motor_model_explanation_panel）
+- [x] 坐标变换说明面板（transform_explanation_panel）
+- [x] SVPWM说明面板（svpwm_explanation_panel）
+- [x] 三环控制说明面板（control_loop_explanation_panel）
+- [x] 自定义绘图组件：hexagon_widget, coordinate_widget, circuit_widget
+- [x] 可交互控制框图编辑器（cascade_widget）
+  - [x] 可拖拽矩形块（block_item）- 支持调整大小
+  - [x] 可拖拽求和点（sumpoint_item）- 支持调整大小
+  - [x] 可拖拽文本标签（label_item）- 滚轮调整字号
+  - [x] 可拖拽箭头（arrow_item）- 支持水平/垂直、拉伸
+  - [x] 保存/加载布局（JSON格式）
+  - [ ] 组件间连接线功能（待实现）
+
 ### 项目文件结构（规划）
 ```
 qt6_for_visualization_foc/

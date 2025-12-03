@@ -1,9 +1,9 @@
 #include <QApplication>
 #include <QFont>
 #include <QFontDatabase>
-#include <QDebug>
 #include "ui/foc_visualization_window.h"
 #include "ui/control_loop_window.h"
+#include "ui/algorithm_explanation_window.h"
 #include "ui/panels/coord_transform_panel.h"
 #include "ui/panels/svpwm_panel.h"
 #include "ui/panels/motor_state_panel.h"
@@ -33,13 +33,12 @@ int main(int argc, char* argv[])
             QFont font(font_families.first(), 10);
             app.setFont(font);
         }
-    } else {
-        qDebug() << "字体加载失败，使用系统默认字体";
     }
 
-    // 创建双窗口
+    // 创建三窗口
     foc_visualization_window foc_win;
     control_loop_window ctrl_win;
+    algorithm_explanation_window algo_win;
 
     // 创建仿真引擎
     sim_engine engine;
@@ -193,7 +192,6 @@ int main(int argc, char* argv[])
             // 更新控制目标
             ctrl.set_target(cfg.target);
             engine.reset();
-            qDebug() << "配置已加载:" << path;
         }
     });
     
@@ -233,16 +231,17 @@ int main(int argc, char* argv[])
         // 恢复默认PID参数和控制目标
         ctrl.reset_to_default();
         engine.reset();
-        qDebug() << "已恢复默认配置";
     });
 
     // 设置窗口位置
-    foc_win.move(100, 100);
-    ctrl_win.move(920, 100);
+    foc_win.move(50, 50);
+    ctrl_win.move(870, 50);
+    algo_win.move(50, 600);
 
     // 显示窗口
     foc_win.show();
     ctrl_win.show();
+    algo_win.show();
 
     return app.exec();
 }

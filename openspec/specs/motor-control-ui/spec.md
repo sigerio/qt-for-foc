@@ -1,6 +1,9 @@
 # 电机控制UI模块规格
 
-## ADDED Requirements
+## Purpose
+提供电机控制系统的用户界面，包括串口配置、PID参数调节、电机参数配置、控制模式选择和实时数据显示功能。
+
+## Requirements
 
 ### Requirement: 串口配置界面
 系统必须(SHALL)提供串口连接配置界面。
