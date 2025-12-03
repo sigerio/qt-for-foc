@@ -33,12 +33,28 @@ set(SERIAL_SOURCES
     src/serial/modbus_client.h
 )
 
+# 从机模拟器模块源文件
+set(SLAVE_SOURCES
+    src/slave/modbus_slave.cpp
+    src/slave/modbus_slave.h
+    src/slave/test_data_config.cpp
+    src/slave/test_data_config.h
+    src/slave/slave_window.cpp
+    src/slave/slave_window.h
+)
+
 # 参数管理模块源文件
 set(PARAMS_SOURCES
     src/params/motor_params.cpp
     src/params/motor_params.h
     src/params/param_manager.cpp
     src/params/param_manager.h
+)
+
+# 日志模块源文件
+set(LOG_SOURCES
+    src/log/comm_logger.cpp
+    src/log/comm_logger.h
 )
 
 # UI模块源文件
@@ -62,7 +78,9 @@ set(RESOURCES
 add_executable(${PROJECT_NAME} 
     ${SOURCES} 
     ${SERIAL_SOURCES}
+    ${SLAVE_SOURCES}
     ${PARAMS_SOURCES}
+    ${LOG_SOURCES}
     ${UI_SOURCES}
     ${RESOURCES}
 )

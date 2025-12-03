@@ -11,6 +11,9 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QTimer>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
 
 #include "serial/modbus_client.h"
 #include "params/param_manager.h"
@@ -19,6 +22,7 @@
 class serial_config_widget_t;
 class pid_config_widget_t;
 class motor_config_widget_t;
+class slave_window_t;
 
 /**
  * @brief 主窗口类
@@ -41,9 +45,13 @@ private slots:
     
     /* 定时器槽 */
     void slot_poll_realtime_data();
+    
+    /* 菜单槽 */
+    void slot_open_slave_window();
 
 private:
     void setup_ui();
+    void setup_menu();
     void setup_connections();
     void update_status_bar(const QString &msg);
 
@@ -64,6 +72,9 @@ private:
     
     /* 定时器 */
     QTimer *m_poll_timer;
+    
+    /* 从机模拟器窗口 */
+    slave_window_t *m_slave_window;
     
     static const int POLL_INTERVAL_MS = 100;  /* 实时数据轮询间隔 */
 };

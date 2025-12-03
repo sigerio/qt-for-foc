@@ -91,10 +91,15 @@ private:
     bool parse_write_response(const QByteArray &response);
     void handle_reconnect();
 
+public:
+    /* 检查是否正在等待响应 */
+    bool is_busy() const { return m_is_busy; }
+
 private:
     QSerialPort *m_serial_port;       /* 串口对象 */
     serial_config_t m_config;          /* 当前配置 */
     connection_state_E m_state;        /* 连接状态 */
+    bool m_is_busy;                    /* 请求繁忙标志 */
     
     QTimer *m_timeout_timer;           /* 超时定时器 */
     QTimer *m_reconnect_timer;         /* 重连定时器 */
@@ -105,7 +110,7 @@ private:
     int m_current_start_addr;          /* 当前请求起始地址 */
     quint8 m_current_function_code;    /* 当前功能码 */
     
-    QMutex m_mutex;                    /* 线程安全锁 */
+    QRecursiveMutex m_mutex;           /* 线程安全锁（递归） */
 
     static const int MAX_RECONNECT_ATTEMPTS = 3;  /* 最大重连次数 */
     static const int RECONNECT_INTERVAL_MS = 2000;/* 重连间隔(ms) */

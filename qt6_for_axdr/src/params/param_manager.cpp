@@ -257,34 +257,39 @@ void param_manager_t::slot_on_write_completed(int addr, bool success)
 
 /**
  * @brief 将两个16位寄存器转换为float
- * @param high 高16位寄存器值
- * @param low 低16位寄存器值
+ * @param reg0 第一个寄存器值（低16位）
+ * @param reg1 第二个寄存器值（高16位）
  * @return 转换后的float值
- * @note 使用大端序（高位在前）
+ * @note 使用小端序（低位在前）
  */
-float param_manager_t::registers_to_float(quint16 high, quint16 low)
+float param_manager_t::registers_to_float(quint16 reg0, quint16 reg1)
 {
-    /* 将两个16位寄存器合并为32位float (大端序) */
-    quint32 combined = ((quint32)high << 16) | low;
-    float result;
-    memcpy(&result, &combined, sizeof(float));
-    return result;
+    /* 将两个16位寄存器合并为32位float (小端序: reg0在低位) */
+    union {
+        float f;
+        quint32 u;
+    } converter;
+    converter.u = ((quint32)reg1 << 16) | reg0;
+    return converter.f;
 }
 
 /**
  * @brief 将float转换为两个16位寄存器值
  * @param value 要转换的float值
- * @param high 输出高16位寄存器值
- * @param low 输出低16位寄存器值
- * @note 使用大端序（高位在前）
+ * @param reg0 输出第一个寄存器值（低16位）
+ * @param reg1 输出第二个寄存器值（高16位）
+ * @note 使用小端序（低位在前）
  */
-void param_manager_t::float_to_registers(float value, quint16 &high, quint16 &low)
+void param_manager_t::float_to_registers(float value, quint16 &reg0, quint16 &reg1)
 {
-    /* 将float拆分为两个16位寄存器 (大端序) */
-    quint32 combined;
-    memcpy(&combined, &value, sizeof(float));
-    high = (quint16)(combined >> 16);
-    low = (quint16)(combined & 0xFFFF);
+    /* 将float拆分为两个16位寄存器 (小端序: reg0存低位) */
+    union {
+        float f;
+        quint32 u;
+    } converter;
+    converter.f = value;
+    reg0 = (quint16)(converter.u & 0xFFFF);
+    reg1 = (quint16)(converter.u >> 16);
 }
 
 QJsonObject param_manager_t::config_to_json(const motor_config_t &config)

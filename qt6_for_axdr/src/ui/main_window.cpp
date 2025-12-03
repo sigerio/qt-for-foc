@@ -7,6 +7,7 @@
 #include "serial_config_widget.h"
 #include "pid_config_widget.h"
 #include "motor_config_widget.h"
+#include "slave/slave_window.h"
 
 #include <QVBoxLayout>
 #include <QMessageBox>
@@ -17,6 +18,7 @@ main_window_t::main_window_t(QWidget *parent)
     , m_param_manager(nullptr)
     , m_tab_widget(nullptr)
     , m_poll_timer(nullptr)
+    , m_slave_window(nullptr)
 {
     /* 创建核心对象 */
     m_modbus_client = new modbus_client_t(this);
@@ -26,6 +28,7 @@ main_window_t::main_window_t(QWidget *parent)
     m_poll_timer = new QTimer(this);
     
     setup_ui();
+    setup_menu();
     setup_connections();
     
     setWindowTitle("AxDr电机控制上位机");
@@ -109,10 +112,7 @@ void main_window_t::slot_on_connection_changed(connection_state_E state)
     case e_connected:
         m_status_label->setText("已连接");
         m_status_label->setStyleSheet("color: green;");
-        /* 启动实时数据轮询 */
-        m_poll_timer->start(POLL_INTERVAL_MS);
-        /* 读取所有参数 */
-        m_param_manager->read_all_params();
+        /* 连接成功，不自动轮询，由用户手动控制 */
         break;
     case e_error:
         m_status_label->setText("连接错误");
@@ -158,4 +158,33 @@ void main_window_t::slot_poll_realtime_data()
 void main_window_t::update_status_bar(const QString &msg)
 {
     statusBar()->showMessage(msg, 3000);
+}
+
+/**
+ * @brief 初始化菜单栏
+ */
+void main_window_t::setup_menu()
+{
+    QMenu *tools_menu = menuBar()->addMenu("工具(&T)");
+    
+    QAction *slave_action = new QAction("打开从机模拟器(&S)", this);
+    slave_action->setShortcut(QKeySequence("Ctrl+Shift+S"));
+    connect(slave_action, &QAction::triggered, this, &main_window_t::slot_open_slave_window);
+    tools_menu->addAction(slave_action);
+}
+
+/**
+ * @brief 打开从机模拟器窗口
+ */
+void main_window_t::slot_open_slave_window()
+{
+    if (!m_slave_window) {
+        m_slave_window = new slave_window_t(nullptr);
+        /* 窗口关闭时不删除，只隐藏 */
+        m_slave_window->setAttribute(Qt::WA_DeleteOnClose, false);
+    }
+    
+    m_slave_window->show();
+    m_slave_window->raise();
+    m_slave_window->activateWindow();
 }

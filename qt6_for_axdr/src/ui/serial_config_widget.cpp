@@ -129,7 +129,9 @@ void serial_config_widget_t::slot_refresh_ports()
  */
 void serial_config_widget_t::slot_connect_clicked()
 {
+    qDebug() << "[serial_config] 连接按钮被点击";
     serial_config_t config = get_config_from_ui();
+    qDebug() << "[serial_config] 配置端口:" << config.port_name << "波特率:" << config.baud_rate;
     m_client->connect_device(config);
 }
 

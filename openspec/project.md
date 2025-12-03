@@ -10,7 +10,7 @@
 - CMake 3.16+
 - Modbus RTU协议（手动实现，不依赖SerialBus）
 
-## Current Progress (2025-12-01)
+## Current Progress (2025-12-02)
 
 ### 已完成功能
 - [x] 项目基础架构搭建
@@ -19,7 +19,16 @@
 - [x] 用户界面模块（串口配置、PID配置、电机配置）
 - [x] 配置文件保存/加载（JSON格式）
 - [x] 实时数据显示
-- [x] 编译通过，界面显示正常
+- [x] 从机模拟器（独立窗口，支持物理串口测试）
+- [x] 通信日志记录（收发数据包hex dump）
+- [x] 协议文档（docs/protocol.md）
+
+### 已修复问题
+- [x] 死锁问题：QMutex → QRecursiveMutex
+- [x] 请求冲突：添加m_is_busy标志防止并发请求
+- [x] 小端序float转换（union方式）
+- [x] 从机寄存器映射与主机一致（每个float占2个寄存器）
+- [x] 从机界面按数据类型显示（float/整型）
 
 ### 项目文件结构
 ```
@@ -27,23 +36,28 @@ qt6_for_axdr/
 ├── CMakeLists.txt          # CMake构建配置
 ├── Makefile                # 构建辅助脚本
 ├── main.cpp                # 主程序入口
-├── resources.qrc           # Qt资源文件（空）
+├── resources.qrc           # Qt资源文件
 ├── fonts/                  # 字体文件（运行时加载）
 │   └── AlibabaPuHuiTi-Regular.ttf
+├── docs/                   # 文档
+│   └── protocol.md         # Modbus RTU协议文档
 └── src/
     ├── serial/             # 串口通信模块
-    │   ├── modbus_client.h
-    │   └── modbus_client.cpp
+    │   ├── modbus_client.h/cpp
     ├── params/             # 参数管理模块
-    │   ├── motor_params.h      # 数据结构定义
-    │   ├── motor_params.cpp
-    │   ├── param_manager.h     # 参数管理器
-    │   └── param_manager.cpp
+    │   ├── motor_params.h/cpp
+    │   ├── param_manager.h/cpp
+    ├── slave/              # 从机模拟器模块
+    │   ├── modbus_slave.h/cpp      # Modbus从机实现
+    │   ├── slave_window.h/cpp      # 从机独立窗口
+    │   ├── test_data_config.h/cpp  # 测试数据配置
+    ├── log/                # 日志模块
+    │   └── comm_logger.h/cpp       # 通信日志记录
     └── ui/                 # 用户界面模块
-        ├── main_window.h/cpp           # 主窗口
-        ├── serial_config_widget.h/cpp  # 串口配置控件
-        ├── pid_config_widget.h/cpp     # PID参数配置控件
-        └── motor_config_widget.h/cpp   # 电机参数配置控件
+        ├── main_window.h/cpp
+        ├── serial_config_widget.h/cpp
+        ├── pid_config_widget.h/cpp
+        └── motor_config_widget.h/cpp
 ```
 
 ### 待完成功能
