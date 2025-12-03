@@ -39,3 +39,5 @@ Thumbs.db
 # 日志文件
 *.log
 **/log/*.log
+qt6_for_axdr/build_error.log
+qt6_for_axdr/runlog

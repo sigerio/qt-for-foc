@@ -164,3 +164,139 @@ qt6_for_axdr/
 
 ## External Dependencies
 - Qt6 SerialPort模块
+
+
+---
+
+## FOC可视化学习工具 (qt6_for_visualization_foc)
+
+### 项目概述
+纯软件模拟的FOC算法可视化学习工具，脱离硬件平台，用于学习和理解FOC控制算法。
+
+### 技术规格
+- 仿真步长: 10μs（可选100μs）
+- 界面: 双窗口多面板
+- 电机模型: PMSM数学模型
+
+### 界面设计
+
+**窗口1 - FOC算法可视化**
+- 坐标变换面板（Clark/Park矢量圆动画）
+- SVPWM面板（六边形矢量图、扇区判断）
+- 电机状态面板（转子动画、三相波形）
+
+**窗口2 - 三环控制**
+- 电流环（Id/Iq波形、PI参数调节）
+- 速度环（速度波形、PI参数调节）
+- 位置环（位置波形、PID参数调节）
+- 各环路启用/禁用开关
+
+### 交互功能
+- 运行/暂停/单步执行
+- 算法步骤高亮显示
+- PID参数实时调节
+- 负载扰动注入
+- 目标值设定
+
+### 里程碑计划
+
+#### M1: 项目基础架构 [已完成] ✓
+- [x] CMake项目配置
+- [x] 双窗口框架搭建（垂直分割布局）
+- [x] 基础面板布局（6个面板占位）
+- [x] 类型定义（motor_state_t, motor_params_t等）
+
+#### M2: 电机数学模型 [已完成] ✓
+- [x] PMSM电机dq轴模型（欧拉法求解）
+- [x] 仿真引擎（支持10μs/100μs步长）
+- [x] 电磁转矩计算
+- [x] 机械动态方程
+- [x] 电机模型工厂（支持扩展）
+- [ ] 电机参数配置界面
+
+#### M3: 坐标变换模块 [已完成] ✓
+- [x] Clark变换实现（abc→αβ）
+- [x] Park变换实现（αβ→dq）
+- [x] 逆Clark变换
+- [x] 逆Park变换
+- [x] Iα-Iβ矢量圆动画（vector_scope控件）
+- [x] Id-Iq矢量显示
+
+#### M4: SVPWM模块 [已完成] ✓
+- [x] SVPWM算法实现（七段式）
+- [x] 扇区判断算法
+- [x] 基本矢量时间计算
+- [x] 占空比计算
+- [x] 六边形矢量图绘制（svpwm_hexagon控件）
+- [x] PWM占空比进度条显示
+
+#### M5: 三环控制模块 [已完成] ✓
+- [x] PID控制器基类
+- [x] 电流环PI控制器
+- [x] 速度环PI控制器
+- [x] 位置环PID控制器
+- [x] 串级控制架构
+- [x] 环路启用/禁用开关
+- [x] 波形实时显示（waveform_view控件）
+- [x] PID参数调节滑块
+
+#### M6: 电机状态可视化 [已完成] ✓
+- [x] 转子角度动画（rotor_animator控件）
+- [x] 三相电流波形
+- [x] 实时数据面板
+
+#### M7: 交互与调试功能 [已完成] ✓
+- [x] 运行/暂停/复位控制
+- [x] 单步执行模式
+- [x] 算法步骤高亮（step_indicator控件）
+- [x] PID参数滑块调节
+- [ ] 负载扰动注入
+- [ ] 目标速度/位置设定（通过UI控件实现）
+
+#### M8: 集成与优化 [已完成] ✓
+- [x] 模块集成（仿真引擎连接UI面板）
+- [x] 运行/暂停/复位控制
+- [x] 单步执行功能
+- [x] 电机类型切换（PMSM/BLDC）
+- [x] 控制模式选择（FOC/六步换向）
+
+#### M9: BLDC模型与六步换向 [进行中]
+- [x] BLDC电机模型实现（梯形波反电动势）
+- [x] 六步换向控制器框架
+- [x] 电机类型选择UI
+- [x] 控制模式选择UI
+- [ ] 六步换向仿真集成
+- [ ] 换向时序可视化
+
+#### M10: 控制算法调优 [待开始]
+- [ ] PMSM FOC控制参数整定
+- [ ] BLDC FOC控制参数整定
+- [ ] 六步换向控制参数整定
+- [ ] 控制性能对比分析
+- [ ] 参数自整定功能（可选）
+
+### 项目文件结构（规划）
+```
+qt6_for_visualization_foc/
+├── CMakeLists.txt
+├── Makefile
+├── main.cpp
+└── src/
+    ├── core/               # 核心仿真引擎
+    │   ├── foc_engine.h/cpp        # FOC仿真引擎
+    │   ├── pmsm_model.h/cpp        # PMSM电机模型
+    │   └── transforms.h/cpp        # 坐标变换
+    ├── control/            # 控制算法
+    │   ├── pid_controller.h/cpp    # PID控制器
+    │   ├── current_loop.h/cpp      # 电流环
+    │   ├── velocity_loop.h/cpp     # 速度环
+    │   ├── position_loop.h/cpp     # 位置环
+    │   └── svpwm.h/cpp             # SVPWM算法
+    └── ui/                 # 用户界面
+        ├── window_foc.h/cpp        # 窗口1-FOC可视化
+        ├── window_control.h/cpp    # 窗口2-三环控制
+        ├── panel_transform.h/cpp   # 坐标变换面板
+        ├── panel_svpwm.h/cpp       # SVPWM面板
+        ├── panel_motor.h/cpp       # 电机状态面板
+        └── panel_loop.h/cpp        # 控制环面板
+```
