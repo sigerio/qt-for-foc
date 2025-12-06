@@ -4,6 +4,8 @@
 #include "ui/foc_visualization_window.h"
 #include "ui/control_loop_window.h"
 #include "ui/algorithm_explanation_window.h"
+#include "ui/panels/control_loop_explanation_panel.h"
+#include "ui/widgets/cascade_widget.h"
 #include "ui/panels/coord_transform_panel.h"
 #include "ui/panels/svpwm_panel.h"
 #include "ui/panels/motor_state_panel.h"
@@ -207,6 +209,12 @@ int main(int argc, char* argv[])
             m->set_params(params);
         }
     });
+    
+    // 环路使能变化触发框图配置加载
+    if (auto* cascade = algo_win.control_panel()->get_cascade_widget()) {
+        QObject::connect(&ctrl_win, &control_loop_window::loop_preset_changed,
+                         cascade, &cascade_widget::load_preset);
+    }
     
     // 恢复默认配置
     QObject::connect(&ctrl_win, &control_loop_window::config_reset_requested, [&]() {

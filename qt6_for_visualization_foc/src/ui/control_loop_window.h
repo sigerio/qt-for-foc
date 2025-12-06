@@ -48,6 +48,8 @@ signals:
     void config_load_requested(const QString& path);
     // 恢复默认配置信号
     void config_reset_requested();
+    // 环路使能状态变化信号（preset: current/current_velocity/full）
+    void loop_preset_changed(const QString& preset_name);
 
 private slots:
     void on_run_clicked();
@@ -58,6 +60,7 @@ private slots:
     void on_speed_ratio_changed(int index);
     void on_load_config_clicked();
     void on_reset_config_clicked();
+    void on_loop_enable_changed();  // 环路使能状态变化
 
 private:
     void setup_ui();

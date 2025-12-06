@@ -15,6 +15,9 @@ class position_loop_panel : public QWidget {
 public:
     explicit position_loop_panel(QWidget* parent = nullptr);
     
+    // 获取使能状态
+    bool is_enabled() const;
+    
 public slots:
     // 更新位置波形
     void update_position(double pos_ref, double pos);

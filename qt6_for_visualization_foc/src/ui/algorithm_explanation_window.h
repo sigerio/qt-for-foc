@@ -18,6 +18,9 @@ class algorithm_explanation_window : public QMainWindow {
 public:
     explicit algorithm_explanation_window(QWidget* parent = nullptr);
     ~algorithm_explanation_window() override;
+    
+    // 获取控制环说明面板
+    control_loop_explanation_panel* control_panel() { return m_control_panel; }
 
 private:
     void setup_ui();

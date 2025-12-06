@@ -152,4 +152,8 @@ void position_loop_panel::on_enable_changed(int state) {
     emit loop_enabled_changed(state == Qt::Checked);
 }
 
+bool position_loop_panel::is_enabled() const {
+    return m_check_enable->isChecked();
+}
+
 void position_loop_panel::update_waveform() {}

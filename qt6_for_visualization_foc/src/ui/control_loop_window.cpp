@@ -153,6 +153,14 @@ void control_loop_window::setup_connections()
             this, &control_loop_window::on_speed_ratio_changed);
     connect(m_btn_load_config, &QPushButton::clicked, this, &control_loop_window::on_load_config_clicked);
     connect(m_btn_reset_config, &QPushButton::clicked, this, &control_loop_window::on_reset_config_clicked);
+    
+    // 连接各环路使能信号
+    connect(m_current_panel, &current_loop_panel::loop_enabled_changed, 
+            this, &control_loop_window::on_loop_enable_changed);
+    connect(m_velocity_panel, &velocity_loop_panel::loop_enabled_changed, 
+            this, &control_loop_window::on_loop_enable_changed);
+    connect(m_position_panel, &position_loop_panel::loop_enabled_changed, 
+            this, &control_loop_window::on_loop_enable_changed);
 }
 
 void control_loop_window::on_run_clicked()
@@ -237,4 +245,27 @@ void control_loop_window::update_waveform()
     if (m_current_panel) m_current_panel->update_waveform();
     if (m_velocity_panel) m_velocity_panel->update_waveform();
     if (m_position_panel) m_position_panel->update_waveform();
+}
+
+void control_loop_window::on_loop_enable_changed()
+{
+    // 获取各环路使能状态
+    bool current_enabled = m_current_panel && m_current_panel->is_enabled();
+    bool velocity_enabled = m_velocity_panel && m_velocity_panel->is_enabled();
+    bool position_enabled = m_position_panel && m_position_panel->is_enabled();
+    
+    // 根据使能状态确定预设类型
+    QString preset;
+    if (current_enabled && velocity_enabled && position_enabled) {
+        preset = "full";
+    } else if (current_enabled && velocity_enabled) {
+        preset = "current_velocity";
+    } else if (current_enabled) {
+        preset = "current";
+    }
+    
+    // 发出信号
+    if (!preset.isEmpty()) {
+        emit loop_preset_changed(preset);
+    }
 }

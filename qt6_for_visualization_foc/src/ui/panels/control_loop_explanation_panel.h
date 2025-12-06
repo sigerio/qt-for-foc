@@ -13,6 +13,9 @@ class control_loop_explanation_panel : public QGroupBox {
 public:
     explicit control_loop_explanation_panel(QWidget* parent = nullptr);
     ~control_loop_explanation_panel() override = default;
+    
+    // 获取框图编辑器
+    cascade_widget* get_cascade_widget() { return m_structure_widget; }
 
 private:
     void setup_ui();

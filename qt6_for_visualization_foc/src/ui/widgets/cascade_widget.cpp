@@ -59,17 +59,55 @@ void cascade_widget::setup_toolbar()
     connect(m_btn_label, &QPushButton::clicked, this, &cascade_widget::on_add_label);
     toolbar->addWidget(m_btn_label);
     
-    m_btn_arrow_h = new QPushButton("+ →");
-    m_btn_arrow_h->setFixedHeight(24);
-    m_btn_arrow_h->setToolTip("水平箭头");
-    connect(m_btn_arrow_h, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_h);
-    toolbar->addWidget(m_btn_arrow_h);
+    // 实线箭头（四方向）
+    m_btn_arrow_right = new QPushButton("→");
+    m_btn_arrow_right->setFixedHeight(24);
+    m_btn_arrow_right->setToolTip("向右箭头");
+    connect(m_btn_arrow_right, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_right);
+    toolbar->addWidget(m_btn_arrow_right);
     
-    m_btn_arrow_v = new QPushButton("+ ↓");
-    m_btn_arrow_v->setFixedHeight(24);
-    m_btn_arrow_v->setToolTip("垂直箭头");
-    connect(m_btn_arrow_v, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_v);
-    toolbar->addWidget(m_btn_arrow_v);
+    m_btn_arrow_left = new QPushButton("←");
+    m_btn_arrow_left->setFixedHeight(24);
+    m_btn_arrow_left->setToolTip("向左箭头");
+    connect(m_btn_arrow_left, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_left);
+    toolbar->addWidget(m_btn_arrow_left);
+    
+    m_btn_arrow_down = new QPushButton("↓");
+    m_btn_arrow_down->setFixedHeight(24);
+    m_btn_arrow_down->setToolTip("向下箭头");
+    connect(m_btn_arrow_down, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_down);
+    toolbar->addWidget(m_btn_arrow_down);
+    
+    m_btn_arrow_up = new QPushButton("↑");
+    m_btn_arrow_up->setFixedHeight(24);
+    m_btn_arrow_up->setToolTip("向上箭头");
+    connect(m_btn_arrow_up, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_up);
+    toolbar->addWidget(m_btn_arrow_up);
+    
+    // 虚线箭头（四方向）
+    m_btn_arrow_right_dashed = new QPushButton("⇢");
+    m_btn_arrow_right_dashed->setFixedHeight(24);
+    m_btn_arrow_right_dashed->setToolTip("向右虚线箭头");
+    connect(m_btn_arrow_right_dashed, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_right_dashed);
+    toolbar->addWidget(m_btn_arrow_right_dashed);
+    
+    m_btn_arrow_left_dashed = new QPushButton("⇠");
+    m_btn_arrow_left_dashed->setFixedHeight(24);
+    m_btn_arrow_left_dashed->setToolTip("向左虚线箭头");
+    connect(m_btn_arrow_left_dashed, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_left_dashed);
+    toolbar->addWidget(m_btn_arrow_left_dashed);
+    
+    m_btn_arrow_down_dashed = new QPushButton("⇣");
+    m_btn_arrow_down_dashed->setFixedHeight(24);
+    m_btn_arrow_down_dashed->setToolTip("向下虚线箭头");
+    connect(m_btn_arrow_down_dashed, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_down_dashed);
+    toolbar->addWidget(m_btn_arrow_down_dashed);
+    
+    m_btn_arrow_up_dashed = new QPushButton("⇡");
+    m_btn_arrow_up_dashed->setFixedHeight(24);
+    m_btn_arrow_up_dashed->setToolTip("向上虚线箭头");
+    connect(m_btn_arrow_up_dashed, &QPushButton::clicked, this, &cascade_widget::on_add_arrow_up_dashed);
+    toolbar->addWidget(m_btn_arrow_up_dashed);
     
     toolbar->addSpacing(10);
     
@@ -120,17 +158,65 @@ void cascade_widget::on_add_label()
     m_scene->addItem(item);
 }
 
-void cascade_widget::on_add_arrow_h()
+void cascade_widget::on_add_arrow_right()
 {
-    auto* item = new arrow_item(arrow_item::Horizontal);
+    auto* item = new arrow_item(arrow_item::Right);
     item->setPos(50 + QRandomGenerator::global()->bounded(100), 
                  50 + QRandomGenerator::global()->bounded(100));
     m_scene->addItem(item);
 }
 
-void cascade_widget::on_add_arrow_v()
+void cascade_widget::on_add_arrow_left()
 {
-    auto* item = new arrow_item(arrow_item::Vertical);
+    auto* item = new arrow_item(arrow_item::Left);
+    item->setPos(50 + QRandomGenerator::global()->bounded(100), 
+                 50 + QRandomGenerator::global()->bounded(100));
+    m_scene->addItem(item);
+}
+
+void cascade_widget::on_add_arrow_down()
+{
+    auto* item = new arrow_item(arrow_item::Down);
+    item->setPos(50 + QRandomGenerator::global()->bounded(100), 
+                 50 + QRandomGenerator::global()->bounded(100));
+    m_scene->addItem(item);
+}
+
+void cascade_widget::on_add_arrow_up()
+{
+    auto* item = new arrow_item(arrow_item::Up);
+    item->setPos(50 + QRandomGenerator::global()->bounded(100), 
+                 50 + QRandomGenerator::global()->bounded(100));
+    m_scene->addItem(item);
+}
+
+void cascade_widget::on_add_arrow_right_dashed()
+{
+    auto* item = new arrow_item(arrow_item::Right, arrow_item::Dashed);
+    item->setPos(50 + QRandomGenerator::global()->bounded(100), 
+                 50 + QRandomGenerator::global()->bounded(100));
+    m_scene->addItem(item);
+}
+
+void cascade_widget::on_add_arrow_left_dashed()
+{
+    auto* item = new arrow_item(arrow_item::Left, arrow_item::Dashed);
+    item->setPos(50 + QRandomGenerator::global()->bounded(100), 
+                 50 + QRandomGenerator::global()->bounded(100));
+    m_scene->addItem(item);
+}
+
+void cascade_widget::on_add_arrow_down_dashed()
+{
+    auto* item = new arrow_item(arrow_item::Down, arrow_item::Dashed);
+    item->setPos(50 + QRandomGenerator::global()->bounded(100), 
+                 50 + QRandomGenerator::global()->bounded(100));
+    m_scene->addItem(item);
+}
+
+void cascade_widget::on_add_arrow_up_dashed()
+{
+    auto* item = new arrow_item(arrow_item::Up, arrow_item::Dashed);
     item->setPos(50 + QRandomGenerator::global()->bounded(100), 
                  50 + QRandomGenerator::global()->bounded(100));
     m_scene->addItem(item);
@@ -214,4 +300,23 @@ void cascade_widget::clear_scene()
         m_scene->removeItem(item);
         delete item;
     }
+}
+
+void cascade_widget::load_preset(const QString& preset_name)
+{
+    // 根据预设名称构建配置文件路径
+    QString filename;
+    if (preset_name == "current") {
+        filename = "cascade_current.json";
+    } else if (preset_name == "current_velocity") {
+        filename = "cascade_current_velocity.json";
+    } else if (preset_name == "full") {
+        filename = "cascade_full.json";
+    } else {
+        return;  // 未知预设
+    }
+    
+    // 从 config/ 目录加载
+    QString path = "config/" + filename;
+    load_layout(path);
 }

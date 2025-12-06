@@ -1,0 +1,355 @@
+[
+    {
+        "direction": "right",
+        "label": "Position_ref",
+        "length": 136,
+        "style": "solid",
+        "type": "arrow",
+        "x": -145,
+        "y": 162
+    },
+    {
+        "direction": "up",
+        "label": "θ",
+        "length": 60,
+        "style": "solid",
+        "type": "arrow",
+        "x": 2,
+        "y": 234
+    },
+    {
+        "size": 20,
+        "type": "sumpoint",
+        "x": -8,
+        "y": 152
+    },
+    {
+        "direction": "right",
+        "length": 60,
+        "style": "solid",
+        "type": "arrow",
+        "x": 14,
+        "y": 163
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 230,
+        "name": "P",
+        "type": "block",
+        "w": 120,
+        "x": 74,
+        "y": 108
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 95,
+        "name": "Park Tr",
+        "type": "block",
+        "w": 79,
+        "x": 635,
+        "y": 159
+    },
+    {
+        "direction": "down",
+        "label": "Ib",
+        "length": 67,
+        "style": "solid",
+        "type": "arrow",
+        "x": 1040,
+        "y": 90
+    },
+    {
+        "direction": "down",
+        "label": "Ia",
+        "length": 67,
+        "style": "solid",
+        "type": "arrow",
+        "x": 994,
+        "y": 91
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 90,
+        "name": "Clarke Tr",
+        "type": "block",
+        "w": 114,
+        "x": 973,
+        "y": 159
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 113,
+        "name": "PMSM",
+        "type": "block",
+        "w": 263,
+        "x": 969,
+        "y": -24
+    },
+    {
+        "size": 20,
+        "type": "sumpoint",
+        "x": 547,
+        "y": 189
+    },
+    {
+        "size": 20,
+        "type": "sumpoint",
+        "x": 459,
+        "y": 216
+    },
+    {
+        "direction": "up",
+        "length": 105,
+        "style": "solid",
+        "type": "arrow",
+        "x": 557,
+        "y": 188
+    },
+    {
+        "direction": "right",
+        "label": "id_ref = 0",
+        "length": 88,
+        "style": "solid",
+        "type": "arrow",
+        "x": 370,
+        "y": 226
+    },
+    {
+        "direction": "right",
+        "label": "iq_ref",
+        "length": 195,
+        "style": "solid",
+        "type": "arrow",
+        "x": 350,
+        "y": 200
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 32,
+        "name": "PI",
+        "type": "block",
+        "w": 42,
+        "x": 539,
+        "y": 50
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 34,
+        "name": "PI",
+        "type": "block",
+        "w": 40,
+        "x": 450,
+        "y": -20
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 106,
+        "name": "Inv.Park Tr",
+        "type": "block",
+        "w": 79,
+        "x": 654,
+        "y": -22
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 80,
+        "name": "SVPWM",
+        "type": "block",
+        "w": 94,
+        "x": 806,
+        "y": -7
+    },
+    {
+        "direction": "left",
+        "label": "Iq",
+        "length": 63,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 632,
+        "y": 200
+    },
+    {
+        "direction": "left",
+        "label": "Id",
+        "length": 153,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 632,
+        "y": 226
+    },
+    {
+        "direction": "left",
+        "label": "Iα",
+        "length": 253,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 970,
+        "y": 183
+    },
+    {
+        "direction": "left",
+        "label": "Iβ",
+        "length": 255,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 971,
+        "y": 218
+    },
+    {
+        "direction": "right",
+        "label": "Ud",
+        "length": 161,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 492,
+        "y": -1
+    },
+    {
+        "direction": "right",
+        "label": "Uq",
+        "length": 72,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 582,
+        "y": 66
+    },
+    {
+        "direction": "right",
+        "label": "Uβ",
+        "length": 69,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 735,
+        "y": 46
+    },
+    {
+        "direction": "right",
+        "label": "Uα",
+        "length": 71,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 734,
+        "y": 18
+    },
+    {
+        "direction": "right",
+        "label": "Vc",
+        "length": 68,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 901,
+        "y": 52
+    },
+    {
+        "direction": "right",
+        "label": "Va",
+        "length": 67,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 901,
+        "y": 7
+    },
+    {
+        "direction": "right",
+        "label": "Vb",
+        "length": 67,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 901,
+        "y": 32
+    },
+    {
+        "direction": "down",
+        "label": "Ic",
+        "length": 68,
+        "style": "solid",
+        "type": "arrow",
+        "x": 1073,
+        "y": 90
+    },
+    {
+        "direction": "up",
+        "label": "θ",
+        "length": 74,
+        "style": "solid",
+        "type": "arrow",
+        "x": 683,
+        "y": 158
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 20,
+        "name": "Speed & Position",
+        "type": "block",
+        "w": 565,
+        "x": 635,
+        "y": 314
+    },
+    {
+        "direction": "down",
+        "label": "theta",
+        "length": 221,
+        "style": "solid",
+        "type": "arrow",
+        "x": 1175,
+        "y": 90
+    },
+    {
+        "direction": "up",
+        "label": "θ",
+        "length": 59,
+        "style": "solid",
+        "type": "arrow",
+        "x": 673,
+        "y": 313
+    },
+    {
+        "direction": "up",
+        "length": 197,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 470,
+        "y": 212
+    },
+    {
+        "color": "#e0e8ff",
+        "h": 50,
+        "name": "PI",
+        "type": "block",
+        "w": 62,
+        "x": 286,
+        "y": 177
+    },
+    {
+        "size": 20,
+        "type": "sumpoint",
+        "x": 304,
+        "y": 314
+    },
+    {
+        "direction": "left",
+        "label": "ω \r",
+        "length": 310,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 633,
+        "y": 324
+    },
+    {
+        "direction": "right",
+        "label": "Speed_ref",
+        "length": 109,
+        "style": "solid",
+        "type": "arrow",
+        "x": 196,
+        "y": 324
+    },
+    {
+        "direction": "up",
+        "length": 87,
+        "style": "dashed",
+        "type": "arrow",
+        "x": 314,
+        "y": 313
+    }
+]

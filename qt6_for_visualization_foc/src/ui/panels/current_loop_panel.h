@@ -15,6 +15,9 @@ class current_loop_panel : public QWidget {
 public:
     explicit current_loop_panel(QWidget* parent = nullptr);
     
+    // 获取使能状态
+    bool is_enabled() const;
+    
 public slots:
     // 更新Id/Iq波形
     void update_currents(double id_ref, double id, double iq_ref, double iq);

@@ -4,6 +4,8 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QJsonObject>
 #include <QCursor>
+#include <QInputDialog>
+#include <QLineEdit>
 
 sumpoint_item::sumpoint_item(QGraphicsItem* parent)
     : QGraphicsEllipseItem(0, 0, 20, 20, parent)
@@ -14,6 +16,13 @@ sumpoint_item::sumpoint_item(QGraphicsItem* parent)
     setAcceptHoverEvents(true);
     setBrush(Qt::white);
     setPen(QPen(Qt::black, 1));
+}
+
+void sumpoint_item::set_label(const QString& label)
+{
+    prepareGeometryChange();
+    m_label = label;
+    update();
 }
 
 bool sumpoint_item::is_in_resize_area(const QPointF& pos) const
@@ -68,6 +77,18 @@ void sumpoint_item::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
+void sumpoint_item::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+    Q_UNUSED(event);
+    // 双击编辑标签名称
+    bool ok;
+    QString new_label = QInputDialog::getText(nullptr, "编辑标签", "标签名称:", 
+                                               QLineEdit::Normal, m_label, &ok);
+    if (ok) {
+        set_label(new_label);
+    }
+}
+
 void sumpoint_item::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(option);
@@ -84,6 +105,16 @@ void sumpoint_item::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     qreal r = rect().width() / 2 - 3;
     painter->drawLine(QPointF(cx - r, cy), QPointF(cx + r, cy));
     painter->drawLine(QPointF(cx, cy - r), QPointF(cx, cy + r));
+    
+    // 绘制标签文字（求和点下方）
+    if (!m_label.isEmpty()) {
+        QFont font;
+        font.setPointSize(9);
+        painter->setFont(font);
+        painter->setPen(Qt::black);
+        QPointF text_pos(cx - 20, rect().bottom() + 14);
+        painter->drawText(text_pos, m_label);
+    }
     
     // 选中时绘制调整手柄
     if (isSelected()) {
@@ -102,6 +133,9 @@ QJsonObject sumpoint_item::to_json() const
     obj["x"] = pos().x();
     obj["y"] = pos().y();
     obj["size"] = rect().width();
+    if (!m_label.isEmpty()) {
+        obj["label"] = m_label;
+    }
     return obj;
 }
 
@@ -111,5 +145,8 @@ sumpoint_item* sumpoint_item::from_json(const QJsonObject& obj)
     item->setPos(obj["x"].toDouble(), obj["y"].toDouble());
     qreal size = obj["size"].toDouble(20);
     item->setRect(0, 0, size, size);
+    if (obj.contains("label")) {
+        item->set_label(obj["label"].toString());
+    }
     return item;
 }
