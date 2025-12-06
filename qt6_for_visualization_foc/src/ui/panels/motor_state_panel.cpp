@@ -1,6 +1,5 @@
 #include "motor_state_panel.h"
 #include "../widgets/rotor_animator.h"
-#include "../widgets/waveform_view.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>
@@ -15,30 +14,15 @@ motor_state_panel::motor_state_panel(QWidget* parent) : QWidget(parent) {
     title->setStyleSheet("font-weight: bold; font-size: 14px; padding: 5px;");
     layout->addWidget(title);
     
-    // 转子动画和电流波形区域
-    auto* view_layout = new QHBoxLayout();
-    
-    // 转子动画（固定大小）
+    // 转子动画（居中显示）
     auto* rotor_group = new QGroupBox("转子位置", this);
     auto* rotor_layout = new QVBoxLayout(rotor_group);
+    rotor_layout->setAlignment(Qt::AlignCenter);
     m_rotor = new rotor_animator(this);
     m_rotor->set_pole_pairs(4);
     m_rotor->setFixedSize(220, 220);
     rotor_layout->addWidget(m_rotor);
-    rotor_group->setFixedWidth(240);
-    view_layout->addWidget(rotor_group, 0);
-    
-    // 三相电流波形
-    auto* wave_group = new QGroupBox("三相电流波形", this);
-    auto* wave_layout = new QVBoxLayout(wave_group);
-    m_current_wave = new waveform_view(this);
-    m_current_wave->set_channels(3, {Qt::red, Qt::green, Qt::blue});
-    m_current_wave->set_channel_names({"Ia", "Ib", "Ic"});
-    m_current_wave->set_max_points(1000);  // 增加采样点数避免锯齿
-    wave_layout->addWidget(m_current_wave);
-    view_layout->addWidget(wave_group);
-    
-    layout->addLayout(view_layout, 1);
+    layout->addWidget(rotor_group, 1);
     
     // 状态数值显示
     auto* data_group = new QGroupBox("实时状态", this);
@@ -82,10 +66,6 @@ motor_state_panel::motor_state_panel(QWidget* parent) : QWidget(parent) {
 
 void motor_state_panel::update_angle(double theta_rad) {
     m_rotor->set_angle(theta_rad);
-}
-
-void motor_state_panel::update_phase_currents(double ia, double ib, double ic) {
-    m_current_wave->add_points({ia, ib, ic});
 }
 
 void motor_state_panel::update_motor_state(double omega, double torque, double theta) {

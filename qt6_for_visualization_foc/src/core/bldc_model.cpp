@@ -119,7 +119,13 @@ void bldc_model::calc_alpha_beta_currents() {
 
 // 逆Clark变换
 void bldc_model::calc_abc_currents() {
+    // 三相电流
     m_state.ia = m_state.i_alpha;
     m_state.ib = -0.5 * m_state.i_alpha + SQRT3_DIV_2 * m_state.i_beta;
     m_state.ic = -0.5 * m_state.i_alpha - SQRT3_DIV_2 * m_state.i_beta;
+    
+    // 三相电压（从αβ电压逆Clark变换）
+    m_state.ua = m_state.u_alpha;
+    m_state.ub = -0.5 * m_state.u_alpha + SQRT3_DIV_2 * m_state.u_beta;
+    m_state.uc = -0.5 * m_state.u_alpha - SQRT3_DIV_2 * m_state.u_beta;
 }

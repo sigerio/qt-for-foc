@@ -70,6 +70,9 @@ struct motor_state_t {
     double i_beta    = 0.0;     // β轴电流 (A)
     double u_alpha   = 0.0;     // α轴电压 (V)
     double u_beta    = 0.0;     // β轴电压 (V)
+    double ua        = 0.0;     // a相电压 (V)
+    double ub        = 0.0;     // b相电压 (V)
+    double uc        = 0.0;     // c相电压 (V)
     double te        = 0.0;     // 电磁转矩 (N·m)
     double tl        = 0.0;     // 负载转矩 (N·m)
 };

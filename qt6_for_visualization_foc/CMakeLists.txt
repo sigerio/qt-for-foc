@@ -55,6 +55,8 @@ set(UI_SOURCES
     src/ui/foc_visualization_window.cpp
     src/ui/control_loop_window.h
     src/ui/control_loop_window.cpp
+    src/ui/waveform_window.h
+    src/ui/waveform_window.cpp
     src/ui/algorithm_explanation_window.h
     src/ui/algorithm_explanation_window.cpp
     src/ui/panels/coord_transform_panel.h
@@ -71,6 +73,10 @@ set(UI_SOURCES
     src/ui/panels/position_loop_panel.cpp
     src/ui/panels/motor_params_panel.h
     src/ui/panels/motor_params_panel.cpp
+    src/ui/panels/pid_config_panel.h
+    src/ui/panels/pid_config_panel.cpp
+    src/ui/panels/control_toolbar_panel.h
+    src/ui/panels/control_toolbar_panel.cpp
     src/ui/panels/motor_model_explanation_panel.h
     src/ui/panels/motor_model_explanation_panel.cpp
     src/ui/panels/transform_explanation_panel.h
@@ -105,6 +111,8 @@ set(UI_SOURCES
     src/ui/widgets/label_item.cpp
     src/ui/widgets/arrow_item.h
     src/ui/widgets/arrow_item.cpp
+    src/ui/widgets/resizable_group.h
+    src/ui/widgets/resizable_group.cpp
 )
 
 # 资源文件

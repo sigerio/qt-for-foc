@@ -42,27 +42,7 @@
 - 仿真速度调节（1x/2x/5x/10x）
 - 配置文件导入/导出
 
-## Completed Features
-- [x] 项目基础架构（CMake、双窗口框架、类型定义）
-- [x] PMSM/BLDC电机数学模型（dq轴模型、欧拉法求解）
-- [x] 坐标变换（Clark/Park及逆变换、矢量圆动画）
-- [x] SVPWM算法（七段式、扇区判断、六边形矢量图）
-- [x] 三环控制（电流环/速度环/位置环、串级控制）
-- [x] 电机状态可视化（转子动画、三相波形、实时数据）
-- [x] 六步换向控制（霍尔传感器模拟、换向时序可视化）
-- [x] 控制算法调优（IMC参数整定、配置文件管理）
-- [x] 代码质量优化（查表法优化、函数拆分、注释完善）
 
-## Current Progress
-
-### M12: 算法说明窗口 [进行中]
-- [x] 窗口框架（algorithm_explanation_window）
-- [x] 说明面板（motor_model/transform/svpwm/control_loop）
-- [x] 自定义绘图组件（hexagon/coordinate/circuit_widget）
-- [x] 可交互控制框图编辑器（cascade_widget）
-  - [x] 可拖拽元素（block/sumpoint/label/arrow_item）
-  - [x] 保存/加载布局（JSON格式）
-  - [ ] 组件间连接线功能
 
 ## Project Conventions
 
